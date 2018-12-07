@@ -21,19 +21,18 @@ from lib.api.shodan.shodan import handle_shodan
 from lib.api.google.google import handle_google
 
 def initOptions(args):
-    checkShow(args) # 是否需要show script
-    EngineRegister(args) # 线程注册（设置线程）
-    ScriptRegister(args) # 加载脚本注册
-    TargetRegister(args) # 目标注册
-    Output(args) # 输出文件注册
+    checkShow(args) 
+    EngineRegister(args)
+    ScriptRegister(args)
+    TargetRegister(args)
+    Output(args)
 
 
 
 def checkShow(args):
-    # 如果show，则show一下
+    # if show scripts 
     if args.show_scripts:
         module_name_list = os.listdir(paths.SCRIPT_PATH)
-        #print(module_name_list)
         outputscreen.success('[+] Script Name (total:%s)\n' % str(len(module_name_list) - 1))
         order = 1
         for module in module_name_list:
@@ -42,6 +41,7 @@ def checkShow(args):
 
 
 def EngineRegister(args):
+    # init threads num
     if args.thread_num > 100 or args.thread_num < 1:
         msg = '[*] Invalid input in [-t](range: 1 to 100), has changed to default(10)'
         outputscreen.warning(msg)
@@ -51,7 +51,7 @@ def EngineRegister(args):
 
 def ScriptRegister(args):
 
-    # 如果指定脚本
+    # handle no scripts
     if not args.script_name:
         msg = '[-] Use -s to load script. Example: [-s spider] or [-s ./script/spider.py]'
         outputscreen.error(msg)
@@ -89,8 +89,6 @@ def ScriptRegister(args):
             msg = '[-] Script [%s] not exist. Use [--show] to view all available script in ./scripts/' % args.script_name
             outputscreen.error(msg)
             sys.exit()
-    # outputscreen.info(conf.Module_name) # test.py
-    # outputscreen.info(conf.Module_file_path) #  D:\saucerframe\scripts\test.py
 
     # loader POC module to conf.module_obj
     msg = '[+] Load custom script: %s' % conf.module_name
@@ -155,23 +153,21 @@ def TargetRegister(args):
             outputscreen.error(helpmsg)
             sys.exit()
     
-    # 网络+子网掩码
-    elif args.target_network: # 192.168.1.2/24
+    # ip/mask e.g. 192.168.1.2/24
+    elif args.target_network: 
         try:
-            # 根据掩码算出子网掩码24--》255.255.255.0
-            ip_format= args.target_network.split('/')# ['192.168.1.2', '24']
-            ip_str = IP(ip_format[0]).strBin() # 11000000101010000000000100000010
-            ip_str = ip_str[0:int(ip_format[1])]+'0'*(32-int(ip_format[1])) # '11000000101010000000000100000000'
+            # get 192.168.1.2 -->192.168.1.0
+            ip_format= args.target_network.split('/')
+            ip_str = IP(ip_format[0]).strBin()
+            ip_str = ip_str[0:int(ip_format[1])]+'0'*(32-int(ip_format[1])) 
             ip = "%s.%s.%s.%s"%(str(int(ip_str[0:8],2)), str(int(ip_str[8:16],2)), str(int(ip_str[16:24],2)), str(int(ip_str[24:32],2)))
-            #print(ip)
-            # 192.168.1.0
+            
             ip_range = IP('%s/%s'%(ip,ip_format[1]))
-            #print(ip_range)
             for i in ip_range:
                 conf.target.put(i)
         except:
-            helpmsg = "Invalid input in [-iN], Example: -iN 192.168.1.0/24"
-            outputscreen.error(helpmsg)
+            msg = "[-] Invalid input in [-iN], Example: -iN 192.168.1.0/24"
+            outputscreen.error(msg)
             sys.exit()
             
     else:
