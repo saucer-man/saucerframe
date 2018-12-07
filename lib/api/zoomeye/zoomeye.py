@@ -22,8 +22,8 @@ class ZoomEye():
         self.zoomeye_dork_api = "https://api.zoomeye.org/{}/search"
 
     def auto_login(self):
-        msg = 'Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
-        outputscreen.info(msg)
+        msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
+        outputscreen.success(msg)
         try:
             self.username = ConfigFileParser().ZoomEyeEmail()
             self.password = ConfigFileParser().ZoomEyePassword()
@@ -34,17 +34,17 @@ class ZoomEye():
             if self.get_token():
                 return
 
-        msg = 'Automatic authorization failed.'
+        msg = '[*] Automatic authorization failed.'
         outputscreen.warning(msg)
         self.manual_login()
 
     def manual_login(self):
-        msg = 'Please input your ZoomEye Email and Password below.'
-        outputscreen.info(msg)
-        self.username = input('ZoomEye Username(Email): ').strip()
-        self.password = input('ZoomEye Password: ').strip()
+        msg = '[*] Please input your ZoomEye Email and Password below.'
+        outputscreen.warning(msg)
+        self.username = input('[*] ZoomEye Username(Email): ').strip()
+        self.password = input('[*] ZoomEye Password: ').strip()
         if not self.get_token():
-            msg = 'Invalid ZoomEye username or password.'
+            msg = '[-] Error ZoomEye username or password.'
             outputscreen.error(msg)
             sys.exit()
 
@@ -125,10 +125,10 @@ def handle_zoomeye(query, limit = 50 , type='host', offset=0):
     z.auto_login()
     info = z.resources_info().get('resources')
     if info:
-        msg = 'Available ZoomEye search: (search:%s)' % (info.get('search', 'NO FOUND'))
-        outputscreen.warning(msg)
+        msg = '[+] Available ZoomEye search: (search:%s)' % (info.get('search', 'NO FOUND'))
+        outputscreen.success(msg)
     else:
-        msg = 'ZoomEye API authorization failed, Please re-run it and enter a new token.'
+        msg = '[-] ZoomEye API authorization failed, Please re-run it and enter a new token.'
         outputscreen.error(msg)
         sys.exit()
     # 开始爬取
