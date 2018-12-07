@@ -66,7 +66,7 @@ def handle_fofa(query, limit, offset=0):
             for item in resp.get('results'):
                 cong.target.append(item[0])
             if resp.get('size') >= 100:
-                outputscreen.info("{0} items found! just 100 returned....".format(resp.get('size')))
+                outputscreen.warning("{0} items found! just 100 returned....".format(resp.get('size')))
     except Exception as e:
         outputscreen.error(e)
         sys.exit()
