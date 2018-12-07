@@ -6,13 +6,18 @@ Copyright (c) saucerman (https://xiaogeng.top)
 See the file 'LICENSE' for copying permission
 """
 
-import requests
 import json
 import sys
 
 from lib.core.data import paths,conf
 from lib.utils.config import ConfigFileParser
 from lib.core.common import outputscreen
+try:
+    import requests
+except:
+    outputscreen.error("[-] Can't import requests")
+    outputscreen.warning("[*] Try pip install requests")
+    sys.exit()
 
 class ZoomEye():
     def __init__(self,username=None, password=None):
