@@ -19,23 +19,23 @@ class Outputscreen:
     warning-->
     '''
     def banner(self):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.blue, BANNER)
+        text = "\033[1;%dm%s \033[0m" % (COLOR.blue, BANNER)
         print(text)
 
     def info(self, text):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.white, text)
+        text = "\033[1;%dm%s \033[0m" % (COLOR.white, text)
         print(text)
 
     def success(self, text):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.green, text)
+        text = "\033[1;%dm%s \033[0m" % (COLOR.green, text)
         print(text)
     
     def warning(self,text):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.cyan, text)
+        text = "\033[1;%dm%s \033[0m" % (COLOR.cyan, text)
         print(text)
 
     def error(self,text):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.red, text)
+        text = "\033[1;%dm%s \033[0m" % (COLOR.red, text)
         print(text)
 outputscreen=Outputscreen()
 
