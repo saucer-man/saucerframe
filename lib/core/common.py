@@ -14,8 +14,9 @@ from lib.core.data import paths, conf, cmdLineOptions
 
 class Outputscreen:
     '''
-    info 没有什么变化
-    error 红色
+    info-->white
+    error-->red
+    warning-->
     '''
     def banner(self):
         text = "\033[1;%dm %s \033[0m" % (COLOR.blue, BANNER)
@@ -26,11 +27,11 @@ class Outputscreen:
         print(text)
 
     def success(self, text):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.yellow, text)
+        text = "\033[1;%dm %s \033[0m" % (COLOR.green, text)
         print(text)
     
     def warning(self,text):
-        text = "\033[1;%dm %s \033[0m" % (COLOR.green, text)
+        text = "\033[1;%dm %s \033[0m" % (COLOR.cyan, text)
         print(text)
 
     def error(self,text):
@@ -54,15 +55,14 @@ def setpaths():
     if not os.path.exists(paths.DATA_PATH):
         os.mkdir(paths.DATA_PATH)
 
-    paths.WEAK_PASS = os.path.join(paths.DATA_PATH, "pass100.txt")
-    paths.LARGE_WEAK_PASS = os.path.join(paths.DATA_PATH, "pass1000.txt")
-    paths.UA_LIST_PATH = os.path.join(paths.DATA_PATH, "user-agents.txt")
+    # paths.WEAK_PASS = os.path.join(paths.DATA_PATH, "pass100.txt")
+    # paths.LARGE_WEAK_PASS = os.path.join(paths.DATA_PATH, "pass1000.txt")
+    # paths.UA_LIST_PATH = os.path.join(paths.DATA_PATH, "user-agents.txt")
 
-    if os.path.isfile(paths.CONFIG_PATH) and os.path.isfile(paths.WEAK_PASS) and os.path.isfile(
-            paths.LARGE_WEAK_PASS) and os.path.isfile(paths.UA_LIST_PATH):
+    if os.path.isfile(paths.CONFIG_PATH):
         pass
     else:
-        msg = 'Some files missing, it may cause an issue.\n'
+        msg = 'Config files missing, it may cause an issue.\n'
         outputscreen.error(msg)
         sys.exit(0)
     
