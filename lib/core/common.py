@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# project = https://github.com/saucer-man/saucerframe
-# author = saucerman
+
+"""
+Copyright (c) saucerman (https://xiaogeng.top)
+See the file 'LICENSE' for copying permission
+"""
 
 import sys
 import os.path

@@ -1,18 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# project = https://github.com/saucer-man/saucerframe
-# author = saucerman
 
 """
-conf.thread_num 线程 10
-conf.module_name 脚本名 test.py
-conf.module_path 脚本路径 D:\saucerframe\scripts\test.py
-conf.module_obj 脚本中的poc模块
-conf.target 目标queue（未做验证） ['www.xiaogeng.top', 'www.xiaogeng.top','hello']
-
-conf.no_output 不输出？默认false----True /False
-conf.output_path 输出位置 D:\saucerframe\output\2018-12-02 22:30:26.txt
+Copyright (c) saucerman (https://xiaogeng.top)
+See the file 'LICENSE' for copying permission
 """
+
 from thirdparty.IPy.IPy import IP
 import queue
 import os
@@ -23,6 +16,9 @@ from lib.core.data import paths, conf
 from lib.core.common import outputscreen, gen_ip
 from lib.core.setting import ESSENTIAL_MODULE_METHODS
 from lib.api.zoomeye.zoomeye import handle_zoomeye
+from lib.api.fofa.fofa import handle_fofa
+from lib.api.shodan.shodan import handle_shodan
+from lib.api.google.google import handle_google
 
 def initOptions(args):
     checkShow(args) # 是否需要show script
@@ -49,6 +45,7 @@ def EngineRegister(args):
         # msg = 'Invalid input in [-t], range: 1 to 100, has changed to default(10)'
         # outputscreen.error(msg)
         conf.thread_num = 10
+        return 
     conf.thread_num = args.thread_num
 
 def ScriptRegister(args):
@@ -217,26 +214,22 @@ def TargetRegister(args):
             handle_fofa(query= args.fofa_dork, limit=conf.limit, offset = conf.offset)
         
         elif args.shodan_dork:
-            handle_shodan(args.shodan_dork)
+            handle_shodan(query= args.shodan_dork,limit=conf.limit, offset = conf.offset)
 
 
-        # elif args.google_dork:
-        #     conf.google_proxy = google_proxy
-        #     handle_google(args.google_dork)
+        elif args.google_dork:
+            conf.google_proxy = args.google_proxy
+            handle_google(query=args.google_dork, limit = conf.limit, offset = conf.offset)
 
     if conf.target.qsize() == 0:
         errormsg = msg = 'No targets found\nPlease load targets with [-iU|-iF|-iR|-iN] or use API with [-aZ|-aS|-aG|-aF]'
         outputscreen.error(errormsg)
         sys.exit()
 
-    while conf.target.qsize() >0:
-        a = conf.target.get()
-        print(a,end='  ')
+    # while conf.target.qsize() >0:
+    #     a = conf.target.get()
+    #     print(a,end='  ')
             
-
-        
-
-
 
 def Output(args):
     if args.no_output and args.output_path:

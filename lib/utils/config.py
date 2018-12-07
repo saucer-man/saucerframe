@@ -1,7 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# project = https://github.com/Xyntax/POC-T
-# author = i@cdxy.me
+
+"""
+Copyright (c) saucerman (https://xiaogeng.top)
+See the file 'LICENSE' for copying permission
+"""
 
 from configparser import ConfigParser
 from lib.core.data import paths
@@ -15,9 +18,8 @@ class ConfigFileParser:
             cf = ConfigParser()
             cf.read(paths.CONFIG_PATH)
             return cf.get(section=section, option=option)
-        except ConfigParser.NoOptionError as e:
+        except:
             outputscreen.warning('Missing essential options, please check your config-file.')
-            outputscreen(e)
             return ''
 
     def ZoomEyeEmail(self):
@@ -32,8 +34,17 @@ class ConfigFileParser:
     def fofa_key(self):
         return self._get_option('fofa','key')
 
-    # def ShodanApikey(self):
-    #     return self._get_option('shodan', 'api_key')
+    def shodan_apikey(self):
+        return self._get_option('shodan', 'api_key')
+
+    def google_proxy(self):
+        return self._get_option('google', 'proxy')
+
+    def google_developer_key(self):
+        return self._get_option('google', 'developer_key')
+
+    def google_engine(self):
+        return self._get_option('google', 'search_engine')
 
     # def CloudEyeApikey(self):
     #     return self._get_option('cloudeye', 'api_key')
@@ -41,13 +52,9 @@ class ConfigFileParser:
     # def ColudEyePersonaldomain(self):
     #     return self._get_option('cloudeye', 'personal_domain')
 
-    # def GoogleProxy(self):
-    #     return self._get_option('google', 'proxy')
 
-    # def GoogleDeveloperKey(self):
-    #     return self._get_option('google', 'developer_key')
 
-    # def GoogleEngine(self):
-    #     return self._get_option('google', 'search_engine')
+
+
 
 

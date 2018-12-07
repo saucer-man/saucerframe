@@ -1,0 +1,4 @@
+*.DS_Store
+*.py[cod]
+output/
+test.txt

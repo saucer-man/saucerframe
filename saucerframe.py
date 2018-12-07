@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# project = https://github.com/saucer-man/saucerframe
-# author = saucerman
+
+"""
+Copyright (c) saucerman (https://xiaogeng.top)
+See the file 'LICENSE' for copying permission
+"""
 
 import os
 from lib.parse.cmdline import cmdLineParser
 from lib.core.common import outputscreen, setpaths
 from lib.core.data import paths, conf, cmdLineOptions
 from lib.core.option import initOptions
-# from lib.controller.loader import loadModule, loadPayloads
 from lib.controller.engine import run
 
 def main():
@@ -24,11 +26,7 @@ def main():
     
     initOptions(cmdLineOptions) # 设置了一下参数给conf
 
-    
-    #loadModule() # 验证script是否有poc模块，加载module
-    #loadPayloads() # 将payload目标加载进th.payload
-
-    # run() # 运行engine
+    run() # 运行engine
 
 
 if __name__ == "__main__":
