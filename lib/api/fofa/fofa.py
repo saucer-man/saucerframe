@@ -6,14 +6,20 @@ Copyright (c) saucerman (https://xiaogeng.top)
 See the file 'LICENSE' for copying permission
 """
 
-import requests
 import json
 import base64
 from lib.utils.config import ConfigFileParser
 from lib.core.common import outputscreen
 from lib.core.data import paths,conf
+try:
+    import requests
+except:
+    outputscreen.error("[-] Can't import requests")
+    outputscreen.warning("[*] Try pip install requests")
+    sys.exit()
 
-def check(email, key): # 验证fofa账户 输入email和key返回true
+# verify email and key
+def check(email, key): 
     if email and key:
         auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email, key)
         try:
@@ -27,7 +33,7 @@ def check(email, key): # 验证fofa账户 输入email和key返回true
 
 
 
-def handle_fofa(query, limit, offset=0):  # TODO 付费获取结果的功能实现，寻找目标的
+def handle_fofa(query, limit, offset=0):
     try:
         msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
         outputscreen.success(msg)
