@@ -17,8 +17,8 @@ try:
     from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError as ServerHttpDenied
 except:
-    outputscreen.error("Can't import googleapiclient")
-    outputscreen.error("Try pip install google-api-python-client")
+    outputscreen.error("[-] Can't import googleapiclient")
+    outputscreen.warning("[*] Try pip install google-api-python-client")
     sys.exit()
 
 def _initHttpClient():
@@ -36,7 +36,7 @@ def _initHttpClient():
     outputscreen.info(msg)
     proxy = proxy_str.strip().split(' ')
     if len(proxy) != 3:
-        msg = 'SyntaxError in GoogleProxy string, Please check your args or config file.'
+        msg = '[-] SyntaxError in GoogleProxy string, Please check your args or config file.'
         outputscreen.error(msg)
         sys.exit()
     if proxy[0].lower() == 'http':
@@ -46,13 +46,13 @@ def _initHttpClient():
     elif proxy[0].lower() == 'sock4':
         type = PROXY_TYPE.SOCKS4
     else:
-        msg = 'Invalid proxy-type in GoogleProxy string, Please check your args or config file.'
+        msg = '[-] Invalid proxy-type in GoogleProxy string, Please check your args or config file.'
         outputscreen.error(msg)
         sys.exit()
     try:
         port = int(proxy[2])
     except ValueError:
-        msg = 'Invalid port in GoogleProxy string, Please check your args or config file.'
+        msg = '[-] Invalid port in GoogleProxy string, Please check your args or config file.'
         outputscreen.error(msg)
         sys.exit()
     else:
@@ -64,15 +64,15 @@ def handle_google(query, limit, offset=0):
     key = ConfigFileParser().google_developer_key()
     engine = ConfigFileParser().google_engine()
     if not key or not engine:
-        msg = "Please config your 'developer_key' and 'search_enging' at saucerfram.conf"
+        msg = "[-] Please config your 'developer_key' and 'search_enging' at saucerfram.conf"
         outputscreen.error(msg)
         sys.exit()
     try:
         service = build("customsearch", "v1", http=_initHttpClient(), developerKey=key)
 
         result_info = service.cse().list(q=query, cx=engine).execute()
-        msg = 'Max query results: %s' % str(result_info.get('searchInformation',{}).get('totalResults'))
-        outputscreen.info(msg)
+        msg = '[+] Max query results: %s' % str(result_info.get('searchInformation',{}).get('totalResults'))
+        outputscreen.success(msg)
 
         ans = set()
         limit += offset
@@ -85,9 +85,9 @@ def handle_google(query, limit, offset=0):
             conf.target.put(t)
 
     except SocketError:
-        outputscreen.error('Unable to connect Google, maybe agent/proxy error.')
+        outputscreen.error('[-] Unable to connect Google, maybe agent/proxy error.')
         sys.exit()
     except ServerHttpDenied as e:
-        outputscreen.warning('It seems like Google-Server denied this request.')
+        outputscreen.warning('[-] It seems like Google-Server denied this request.')
         outputscreen.error(e)
         sys.exit()

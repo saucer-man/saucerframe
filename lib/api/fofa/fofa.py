@@ -29,8 +29,8 @@ def check(email, key): # 验证fofa账户 输入email和key返回true
 
 def handle_fofa(query, limit, offset=0):  # TODO 付费获取结果的功能实现，寻找目标的
     try:
-        msg = 'Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
-        outputscreen.info(msg)
+        msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
+        outputscreen.success(msg)
         email = ConfigFileParser().fofa_email()
         key = ConfigFileParser().fofa_key()
         if check(email, key):
@@ -38,14 +38,14 @@ def handle_fofa(query, limit, offset=0):  # TODO 付费获取结果的功能实�
         else:
             raise  # will go to except block
     except:
-        msg = 'Automatic authorization failed.'
+        msg = '[*] Automatic authorization failed.'
         outputscreen.warning(msg)
-        msg = 'Please input your FoFa Email and API Key below.'
-        outputscreen.info(msg)
-        email = input("Fofa Email: ").strip()
-        key = input('Fofa API Key: ').strip()
+        msg = '[*] Please input your FoFa Email and API Key below.'
+        outputscreen.warning(msg)
+        email = input("[*] Fofa Email: ").strip()
+        key = input('[*] Fofa API Key: ').strip()
         if not check(email, key):
-            msg = 'Fofa API authorization failed, Please re-run it and enter a valid key.'
+            msg = '[-] Fofa API authorization failed, Please re-run it and enter a valid key.'
             outputscreen.error(msg)
             sys.exit()
 
