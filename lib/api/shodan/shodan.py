@@ -14,8 +14,8 @@ try:
     import shodan
     from shodan.exception import APIError
 except:
-    outputscreen.error("Can't import shodan")
-    outputscreen.error("Try pip install shodan")
+    outputscreen.error("[-] Can't import shodan")
+    outputscreen.warning("[*] Try pip install shodan")
     sys.exit()
 
 
@@ -28,23 +28,23 @@ class ShodanBase:
         self.api_key = None
 
     def login(self):
-        msg = 'Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
-        outputscreen.info(msg)
+        msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
+        outputscreen.success(msg)
         self.api_key = ConfigFileParser().shodan_apikey()
 
         if not self.api_key:
-            msg = 'Automatic authorization failed.'
+            msg = '[*] Automatic authorization failed.'
             outputscreen.warning(msg)
-            msg = 'Please input your Shodan API Key (https://account.shodan.io/).'
-            outputscreen.info(msg)
-            self.api_key = input('API KEY > ').strip()
+            msg = '[*] Please input your Shodan API Key (https://account.shodan.io/).'
+            outputscreen.warning(msg)
+            self.api_key = input('[*] API KEY > ').strip()
 
     def account_info(self):
         try:
             api = shodan.Shodan(self.api_key)
             account_info = api.info()
-            msg = "Available Shodan query credits: %d" % account_info.get('query_credits')
-            outputscreen.info(msg)
+            msg = "[+] Available Shodan query credits: %d" % account_info.get('query_credits')
+            outputscreen.success(msg)
         except APIError as e:
             outputscreen.error(e)
             sys.exit()
