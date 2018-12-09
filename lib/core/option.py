@@ -6,7 +6,6 @@ Copyright (c) saucerman (https://xiaogeng.top)
 See the file 'LICENSE' for copying permission
 """
 
-from thirdparty.IPy.IPy import IP
 import queue
 import os
 import sys
@@ -19,6 +18,12 @@ from lib.api.zoomeye.zoomeye import handle_zoomeye
 from lib.api.fofa.fofa import handle_fofa
 from lib.api.shodan.shodan import handle_shodan
 from lib.api.google.google import handle_google
+try:
+    from IPy import IP
+except:
+    outputscreen.error("[-] Can't import IPy")
+    outputscreen.warning("[*] Try pip install IPy")
+    sys.exit()
 
 def initOptions(args):
     checkShow(args) 
