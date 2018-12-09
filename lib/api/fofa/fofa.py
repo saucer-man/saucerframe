@@ -6,6 +6,7 @@ Copyright (c) saucerman (https://xiaogeng.top)
 See the file 'LICENSE' for copying permission
 """
 
+import sys
 import json
 import base64
 from lib.utils.config import ConfigFileParser
