@@ -109,14 +109,16 @@ def ScriptRegister(args):
         sys.exit(0)
 
 def TargetRegister(args):
-    msg = '[+] Initialize targets...'
-    outputscreen.success(msg)
+    msg = '[*] Initialize targets...'
+    outputscreen.warning(msg)
     
     # init target queue
     conf.target = queue.Queue()
 
     # single target to queue
     if args.target_single:
+        msg = '[+] Load target : %s' % args.target_single
+        outputscreen.success(msg)
         conf.target.put(args.target_single)
 
     # file target to queue
@@ -125,7 +127,8 @@ def TargetRegister(args):
             msg = '[-] TargetFile not found: %s' % args.target_file
             outputscreen.error(msg)
             sys.exit()
-
+        msg = '[+] Load targets from : %s' % args.target_file
+        outputscreen.success(msg)
         with open(args.target_file, 'r', encoding='utf8') as f:
             targets = f.readlines()
             for target in targets:
@@ -145,6 +148,10 @@ def TargetRegister(args):
                     msg = '[-] User quit!'
                     outputscreen.warning(msg)
                     sys.exit()
+            
+            msg = '[+] Load targets from : %s' % args.target_range
+            outputscreen.success(msg)
+
             # save to conf
             for target in lists:
                 conf.target.put(target)
@@ -163,6 +170,10 @@ def TargetRegister(args):
             ip = "%s.%s.%s.%s"%(str(int(ip_str[0:8],2)), str(int(ip_str[8:16],2)), str(int(ip_str[16:24],2)), str(int(ip_str[24:32],2)))
             
             ip_range = IP('%s/%s'%(ip,ip_format[1]))
+            
+            msg = '[+] Load targets from : %s' % args.target_network
+            outputscreen.success(msg)
+            
             for i in ip_range:
                 conf.target.put(i)
         except:
