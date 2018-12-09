@@ -1,3 +1,4 @@
+colorama
 requests
 shodan
 google-api-python-client
