@@ -22,19 +22,19 @@ except:
 init(autoreset=True)
 class Outputscreen:
     def info(self, s):
-        print(Style.BRIGHT+Fore.WHITE + s + Fore.RESET+Style.RESET_ALL)
+        print(Style.BRIGHT+Fore.WHITE + str(s) + Fore.RESET+Style.RESET_ALL)
 
     def success(self, s):
-        print(Style.BRIGHT+Fore.GREEN + s + Fore.RESET+Style.RESET_ALL)
+        print(Style.BRIGHT+Fore.GREEN + str(s) + Fore.RESET+Style.RESET_ALL)
 
     def warning(self, s):
-        print(Style.BRIGHT+Fore.CYAN + s + Fore.RESET+Style.RESET_ALL)
+        print(Style.BRIGHT+Fore.CYAN + str(s) + Fore.RESET+Style.RESET_ALL)
 
     def error(self, s):
-        print(Style.BRIGHT+Fore.RED + s + Fore.RESET+Style.RESET_ALL)
+        print(Style.BRIGHT+Fore.RED + str(s) + Fore.RESET+Style.RESET_ALL)
     
     def blue(self, s): # for banner
-        print(Style.BRIGHT+Fore.BLUE + s + Fore.RESET+Style.RESET_ALL)
+        print(Style.BRIGHT+Fore.BLUE + str(s) + Fore.RESET+Style.RESET_ALL)
 
 outputscreen=Outputscreen()
 
