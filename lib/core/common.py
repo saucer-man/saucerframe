@@ -12,33 +12,30 @@ from lib.core.setting import BANNER
 from lib.core.enums import COLOR
 from lib.core.data import paths, conf, cmdLineOptions
 
-class Outputscreen:
-    '''
-    info-->white
-    error-->red
-    warning-->cyan
-    success-->green
-    '''
-    def blue(self,text):
-        text = "\033[1;%dm%s \033[0m" % (COLOR.blue, text)
-        print(text)
+try:
+    from colorama import  init, Fore, Back, Style
+except:
+    print("[-] Can't import colorama")
+    print("[*] Try pip install colorama!")
+    sys.exit()
 
-    def info(self, text):
-        text = "\033[1;%dm%s \033[0m" % (COLOR.white, text)
-        print(text)
+init(autoreset=True)
+class Outputscreen():
+    def info(self, s):
+        print(Style.BRIGHT+Fore.WHITE + s + Fore.RESET+Style.RESET_ALL)
 
-    def success(self, text):
-        text = "\033[1;%dm%s \033[0m" % (COLOR.green, text)
-        print(text)
+    def success(self, s):
+        print(Style.BRIGHT+Fore.GREEN + s + Fore.RESET+Style.RESET_ALL)
+
+    def warning(self, s):
+        print(Style.BRIGHT+Fore.CYAN + s + Fore.RESET+Style.RESET_ALL)
+
+    def error(self, parameter_list):
+        print(Style.BRIGHT+Fore.RED + s + Fore.RESET+Style.RESET_ALL)
     
-    def warning(self,text):
-        text = "\033[1;%dm%s \033[0m" % (COLOR.cyan, text)
-        print(text)
+    def blue(self, s): # for banner
+        print(Style.BRIGHT+Fore.BLUE + s + Fore.RESET+Style.RESET_ALL)
 
-    def error(self,text):
-        text = "\033[1;%dm%s \033[0m" % (COLOR.red, text)
-        print(text)
-    
 outputscreen=Outputscreen()
 
 def setpaths():
