@@ -41,6 +41,9 @@ class ShodanBase:
 
     def account_info(self):
         try:
+            if not self.api_key:
+                outputscreen.error("[-] Shodan api cant not be Null")
+                sys.exit()
             api = shodan.Shodan(self.api_key)
             account_info = api.info()
             msg = "[+] Available Shodan query credits: %d" % account_info.get('query_credits')
