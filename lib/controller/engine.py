@@ -6,12 +6,14 @@ Copyright (c) saucerman (https://xiaogeng.top)
 See the file 'LICENSE' for copying permission
 """
 
+import sys
 import threading
 import time
 import traceback
 from lib.core.data import conf,paths,th
 from lib.core.common import outputscreen
 from lib.core.enums import POC_RESULT_STATUS
+from lib.utils.console import getTerminalSize
 
 def initEngine():
     # init control parameter
@@ -25,6 +27,7 @@ def initEngine():
     th.output_path = conf.output_path 
     th.scan_count = th.found_count = 0 
     th.is_continue = True 
+    th.console_width = getTerminalSize()[0] - 2
     th.start_time = time.time() 
     setThreadLock() 
     msg = '[+] Set the number of thread: %d' % th.thread_num 
@@ -43,7 +46,7 @@ def scan():
     while True:
         th.load_lock.acquire()
         if th.target.qsize() > 0 and th.is_continue: 
-            payload = str(th.target.get(timeout=1.0)) 
+            payload = str(th.target.get(timeout=1.0))
             th.load_lock.release() 
         else:
             th.load_lock.release() 
@@ -79,10 +82,11 @@ def run():
         outputscreen.error(th.errmsg)
 
 def resultHandler(status, payload):
-    # if no vulnerable
+    th.output_screen_lock.acquire()
+    sys.stdout.write(payload+'                   '+"\r")
+    sys.stdout.flush()
+    th.output_screen_lock.release()
     if not status or status is POC_RESULT_STATUS.FAIL:
-        # msg = '[-] ' + payload
-        # outputscreen.info(msg)
         return 
     # try again 
     elif status is POC_RESULT_STATUS.RETRAY:
@@ -97,7 +101,9 @@ def resultHandler(status, payload):
         th.output_screen_lock.release()
     else:
         msg = str(status)
+        th.output_screen_lock.acquire()
         outputscreen.warning(msg)
+        th.output_screen_lock.release()
     # get found number of payload +1
     changeFoundCount(1) 
 
@@ -135,5 +141,5 @@ def changeThreadCount(num):
 def printProgress(): 
     msg = '%s found | %s remaining | %s scanned in %.2f seconds' % (
         th.found_count, th.target.qsize(), th.scan_count, time.time() - th.start_time)
-    # out = '\r' + ' ' * (th.console_width - len(msg)) + msg
-    outputscreen.blue(msg)
+    out = '\r' + ' ' * (th.console_width - len(msg)) + msg
+    outputscreen.blue(out)
