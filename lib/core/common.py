@@ -20,7 +20,7 @@ except:
     sys.exit()
 
 init(autoreset=True)
-class Outputscreen():
+class Outputscreen:
     def info(self, s):
         print(Style.BRIGHT+Fore.WHITE + s + Fore.RESET+Style.RESET_ALL)
 
@@ -30,7 +30,7 @@ class Outputscreen():
     def warning(self, s):
         print(Style.BRIGHT+Fore.CYAN + s + Fore.RESET+Style.RESET_ALL)
 
-    def error(self, parameter_list):
+    def error(self, s):
         print(Style.BRIGHT+Fore.RED + s + Fore.RESET+Style.RESET_ALL)
     
     def blue(self, s): # for banner
