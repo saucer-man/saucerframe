@@ -1,4 +1,5 @@
 # Saucerframe
+[![PyPI version](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/)  [![License](https://img.shields.io/badge/license-GPLv2-red.svg)](https://raw.githubusercontent.com/sqlmapproject/sqlmap/master/LICENSE) 
 
 saucerframe是一个基于python3的开源渗透测试框架，支持多线程并发，支持多种指定目标方式，可用于`爆破`|`批量POC`。
 
