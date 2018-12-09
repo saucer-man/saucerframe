@@ -2,10 +2,10 @@
 
 saucerframe是一个基于python3的开源渗透测试框架，支持多线程并发，支持多种指定目标方式，可用于`爆破`|`批量POC`。
 
-框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)的部分模式和代码。
+框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
 
 # 优点
-- 可扩展性好，根据漏洞编写POC即可批量扫描
+- 可扩展性好，根据漏洞编写POC即可批量扫描|爆破
 - 支持多线程并发
 - 指定目标支持多种方式
     - 指定单个目标
@@ -116,4 +116,8 @@ def poc(url)
     except:
         return False
 ```
+# 关于POC库
 
+本框架的模式基于[POC-T](https://github.com/Xyntax/POC-T)，本来不想重复造轮子，不过[POC-T](https://github.com/Xyntax/POC-T)只支持python2，干脆重写了一个python3的框架。但是POC的设计思想是不变的，有精力我会将已有的POC改成python3版本，传到项目中来。
+
+因为一个人的精力有限，如果你在利用本框架中编写了POC，欢迎通过Issues提交。我会在下面贴出插件信息和作者。
