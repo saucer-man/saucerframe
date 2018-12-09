@@ -32,6 +32,7 @@ def initEngine():
 
 def setThreadLock(): 
     # set thread lock 
+    th.output_screen_lock = threading.Lock()
     th.found_count_lock = threading.Lock()
     th.scan_count_lock = threading.Lock()
     th.thread_count_lock = threading.Lock()
@@ -91,7 +92,9 @@ def resultHandler(status, payload):
     # vulnerable
     elif status is True or status is POC_RESULT_STATUS.SUCCESS:
         msg = '[+] ' + payload
+        th.output_screen_lock.acquire()
         outputscreen.info(msg) # 成功了
+        th.output_screen_lock.release()
     else:
         msg = str(status)
         outputscreen.warning(msg)
