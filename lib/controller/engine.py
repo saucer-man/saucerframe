@@ -102,7 +102,7 @@ def resultHandler(status, payload):
     else:
         msg = str(status)
         th.output_screen_lock.acquire()
-        outputscreen.warning(msg)
+        outputscreen.info(msg)
         th.output_screen_lock.release()
     # get found number of payload +1
     changeFoundCount(1) 
