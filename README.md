@@ -16,6 +16,9 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
     - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)
 
 # Usage
+
+![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
+
 ```
 查看帮助信息:
     -h, --help            show this help message and exit
