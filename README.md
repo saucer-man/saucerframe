@@ -5,6 +5,8 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
 
+**本项目用来交流学习，切勿用来做违法之事**
+
 # 优点
 - 可扩展性好，根据漏洞编写POC即可批量扫描|爆破
 - 支持多线程并发
@@ -125,3 +127,8 @@ def poc(url)
 本框架的模式基于[POC-T](https://github.com/Xyntax/POC-T)，本来不想重复造轮子，不过[POC-T](https://github.com/Xyntax/POC-T)只支持python2，干脆重写了一个python3的框架。但是POC的设计思想是不变的，有精力我会将已有的POC改成python3版本，传到项目中来。
 
 因为一个人的精力有限，如果你在利用本框架中编写了POC，欢迎通过Issues提交。我会在下面贴出插件信息和作者。
+
+| 插件名 | 作者 | 说明 |
+| ------ | ------ | ------ |
+| thinkphp_rce.py | saucerman | ThinkPHP(5.x < 5.1.31 / <= 5.0.23)远程命令执行|
+
