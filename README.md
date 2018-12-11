@@ -130,5 +130,5 @@ def poc(url)
 
 | 插件名 | 作者 | 说明 |
 | ------ | ------ | ------ |
-| thinkphp_rce.py | saucerman | ThinkPHP(5.x < 5.1.31 / <= 5.0.23)远程命令执行|
+| thinkphp_rce.py | saucerman | ThinkPHP(5.x < 5.1.31 / <= 5.0.23)远程命令执行检测 |
 
