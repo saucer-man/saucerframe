@@ -83,7 +83,7 @@ def run():
 
 def resultHandler(status, payload):
     th.output_screen_lock.acquire()
-    sys.stdout.write(payload+'                   '+"\r")
+    sys.stdout.write(payload + " "*(th.console_width-len(payload)) + "\r")
     sys.stdout.flush()
     th.output_screen_lock.release()
     if not status or status is POC_RESULT_STATUS.FAIL:
