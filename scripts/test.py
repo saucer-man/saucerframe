@@ -12,6 +12,6 @@ import time
 
 
 def poc(str):
-    if random.randint(1, 1000) > 998:
+    if random.randint(1, 10000) > 9998:
         return True
     return False
