@@ -13,7 +13,7 @@ def poc(url):
         }
     for payload in payloads:
         vulnurl = url + payload
-        print("test %s"% vulnurl)
+        # print("test %s"% vulnurl)
         try:
             flag = 0
             # 如果是备份文件则不需要下载，只需要head方法获取头部信息即可，否则文件较大会浪费大量的时间
