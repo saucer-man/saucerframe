@@ -38,10 +38,14 @@ def checkShow(args):
     # if show scripts 
     if args.show_scripts:
         module_name_list = os.listdir(paths.SCRIPT_PATH)
-        outputscreen.success('[+] Script Name (total:%s)\n' % str(len(module_name_list) - 1))
+        outputscreen.success('[+] Script Name ')
         order = 1
         for module in module_name_list:
-            outputscreen.success(str(order)+ '. ' +module)
+            if module != '__init__.py' and os.path.splitext(module)[1] == '.py':
+                outputscreen.success(str(order)+ '. ' +module)
+                order += 1
+        msg = '\n' + ' ' * 20 + 'Total: %d' % (order-1)
+        outputscreen.success(msg)
         sys.exit()
 
 
