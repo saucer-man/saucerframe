@@ -12,16 +12,6 @@ from lib.core.common import outputscreen
 from lib.utils.config import ConfigFileParser
 from thirdlib.shodan import Shodan, APIError
 
-# try:
-#     import shodan
-#     from shodan.exception import APIError
-# except:
-#     outputscreen.error("[-] Can't import shodan")
-#     outputscreen.warning("[*] Try pip install shodan")
-#     sys.exit()
-
-
-
 class ShodanBase:
     def __init__(self, query, limit, offset):
         self.query = query
