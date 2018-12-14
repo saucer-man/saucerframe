@@ -131,4 +131,5 @@ def poc(url)
 | 插件名 | 作者 | 日期 | 说明 |
 | ------ | ------ | ------ | ----- |
 | thinkphp_rce.py | saucerman | 2018-12-11 | ThinkPHP(5.x < 5.1.31 / <= 5.0.23)远程命令执行检测 |
+| source_leak_check.py | saucerman |2018-12-14 | 敏感信息泄露检测 |
 
