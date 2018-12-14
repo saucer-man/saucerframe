@@ -11,13 +11,7 @@ import os.path
 from lib.core.setting import BANNER
 from lib.core.enums import COLOR
 from lib.core.data import paths, conf, cmdLineOptions
-
-try:
-    from colorama import  init, Fore, Back, Style
-except:
-    print("[-] Can't import colorama")
-    print("[*] Try pip install colorama!")
-    sys.exit()
+from thirtlib.colorama import init, Fore, Back, Style
 
 init(autoreset=True)
 class Outputscreen:
