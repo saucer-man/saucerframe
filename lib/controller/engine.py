@@ -99,15 +99,16 @@ def resultHandler(status, payload):
         th.output_screen_lock.acquire()
         outputscreen.info(msg) # 成功了
         th.output_screen_lock.release()
+        th.result.append(payload)
     else:
         msg = str(status)
         th.output_screen_lock.acquire()
         outputscreen.info(msg)
         th.output_screen_lock.release()
+        th.result.append(msg)
+
     # get found number of payload +1
     changeFoundCount(1) 
-
-    th.result.append(msg)
 
     # if result list is too large, save it to file and empty list
     if len(th.result) > 5000:
