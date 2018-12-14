@@ -18,7 +18,7 @@ from lib.api.zoomeye.zoomeye import handle_zoomeye
 from lib.api.fofa.fofa import handle_fofa
 from lib.api.shodan.shodan import handle_shodan
 from lib.api.google.google import handle_google
-from thirtlib.IPy.IPy import IP
+from thirdlib.IPy.IPy import IP
 
 
 def initOptions(args):
