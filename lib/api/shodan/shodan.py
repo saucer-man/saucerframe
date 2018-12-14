@@ -10,13 +10,15 @@ import sys
 from lib.core.data import paths,conf
 from lib.core.common import outputscreen
 from lib.utils.config import ConfigFileParser
-try:
-    import shodan
-    from shodan.exception import APIError
-except:
-    outputscreen.error("[-] Can't import shodan")
-    outputscreen.warning("[*] Try pip install shodan")
-    sys.exit()
+from thirdlib.shodan import Shodan, APIError
+
+# try:
+#     import shodan
+#     from shodan.exception import APIError
+# except:
+#     outputscreen.error("[-] Can't import shodan")
+#     outputscreen.warning("[*] Try pip install shodan")
+#     sys.exit()
 
 
 
@@ -44,7 +46,7 @@ class ShodanBase:
             if not self.api_key:
                 outputscreen.error("[-] Shodan api cant not be Null")
                 sys.exit()
-            api = shodan.Shodan(self.api_key)
+            api = Shodan(self.api_key)
             account_info = api.info()
             msg = "[+] Available Shodan query credits: %d" % account_info.get('query_credits')
             outputscreen.success(msg)
@@ -55,7 +57,7 @@ class ShodanBase:
 
     def api_query(self):
         try:
-            api = shodan.Shodan(self.api_key)
+            api = Shodan(self.api_key)
             result = api.search(query=self.query, offset=self.offset, limit=self.limit)
         except APIError as e:
             outputscreen.error(e)

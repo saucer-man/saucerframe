@@ -12,6 +12,7 @@ import time
 
 
 def poc(str):
+    time.sleep(0.1)
     if random.randint(1, 10000) > 9998:
         return True
     return False
