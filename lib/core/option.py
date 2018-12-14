@@ -18,12 +18,8 @@ from lib.api.zoomeye.zoomeye import handle_zoomeye
 from lib.api.fofa.fofa import handle_fofa
 from lib.api.shodan.shodan import handle_shodan
 from lib.api.google.google import handle_google
-try:
-    from IPy import IP
-except:
-    outputscreen.error("[-] Can't import IPy")
-    outputscreen.warning("[*] Try pip install IPy")
-    sys.exit()
+from thirtlib.IPy.IPy import IP
+
 
 def initOptions(args):
     checkShow(args) 
