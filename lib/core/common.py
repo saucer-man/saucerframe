@@ -11,7 +11,7 @@ import os.path
 from lib.core.setting import BANNER
 from lib.core.enums import COLOR
 from lib.core.data import paths, conf, cmdLineOptions
-from thirtlib.colorama import init, Fore, Back, Style
+from thirdlib.colorama import init, Fore, Back, Style
 
 init(autoreset=True)
 class Outputscreen:
