@@ -5,7 +5,7 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
 
-**本项目用来交流学习，切勿用来做违法之事**（如果觉得对您有帮助，欢迎star和fork一起改进）
+**本项目用来交流学习，切勿用来做违法之事**
 
 # 特点
 
@@ -16,6 +16,9 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
     - 某一网段获取目标 e.g. 192.168.1.0/24
     - 某一ip段获取目标 192.168.1.0-192.168.2.33
     - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)
+
+![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
+(thinkphp5远程代码执行shodan批量扫描)
 
 # 更新日志
 
@@ -29,11 +32,7 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 # Usage
 
-![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
-(thinkphp5远程代码执行shodan批量扫描)
 
-![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg2.png)
-(信息泄露批量扫描)
 ```
 查看帮助信息:
     -h, --help            show this help message and exit
