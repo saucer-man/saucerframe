@@ -17,6 +17,7 @@ def main():
     """
     main fuction of saucerframe 
     """
+    banner()
     # set paths of project 
     paths.ROOT_PATH = os.getcwd()
     setpaths()
