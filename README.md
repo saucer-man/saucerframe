@@ -7,8 +7,8 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 **本项目用来交流学习，切勿用来做违法之事**
 
-# 优点
-- 可扩展性好，根据漏洞编写POC即可批量扫描|爆破
+# 特点
+
 - 支持多线程并发
 - 指定目标支持多种方式
     - 指定单个目标
@@ -17,9 +17,19 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
     - 某一ip段获取目标 192.168.1.0-192.168.2.33
     - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)
 
+# 更新日志
+
+- 2018-12-15 
+
+将第三方库colorama、IPy、shodan放进thirdlib中直接引用，减少依赖包的安装
+
+- 2018-12-10 
+
+测试框架编写完成
+
 # Usage
 
-![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
+![利用shodan批量搜索thinkphp5远程执行漏洞](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
 
 ```
 查看帮助信息:
@@ -124,9 +134,9 @@ def poc(url)
 ```
 # 关于POC库
 
-本框架的模式基于[POC-T](https://github.com/Xyntax/POC-T)，本来不想重复造轮子，不过[POC-T](https://github.com/Xyntax/POC-T)只支持python2，干脆重写了一个python3的框架。但是POC的设计思想是不变的，有精力我会将已有的POC改成python3版本，传到项目中来。
+本来不想重复造轮子，不过没找到python3版本的框架，干脆重写了一个python3的框架。但是POC的设计思想是不变的，有时间我将自己写过的一些脚本改成本项目的POC，传到项目中来。
 
-因为一个人的精力有限，如果你在利用本框架中编写了POC，欢迎通过Issues提交。我会在下面贴出插件信息和作者。
+因为一个人的精力有限，如果您在利用本框架中编写了POC，欢迎通过Issues贡献出您的POC或者邮箱联系我(我的邮箱gyq0929@gmail.com)。我会在下面贴出插件信息和作者。
 
 | 插件名 | 作者 | 日期 | 说明 |
 | ------ | ------ | ------ | ----- |
