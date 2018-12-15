@@ -29,8 +29,11 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 # Usage
 
-![利用shodan批量搜索thinkphp5远程执行漏洞](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
+![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
+(thinkphp5远程代码执行shodan批量扫描)
 
+![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg2.png)
+(信息泄露批量扫描)
 ```
 查看帮助信息:
     -h, --help            show this help message and exit
