@@ -6,10 +6,18 @@ Copyright (c) saucerman (https://xiaogeng.top)
 See the file 'LICENSE' for copying permission
 """
 
-VERSION = 1.0
-AUTHOR = "saucerman"
-
-BANNER = "this is banner \n{ Version %s by %s }\n"% (VERSION, AUTHOR)
+BANNER = r"""
+ _______________
+ Saucerframe
+ By saucerman
+ Email:w502325@qq.com
+ ---------------
+        \ ^ __ ^
+         \（oo）\ _______
+            （__）\）\ / \
+                || ---- w |
+                || ||
+"""
 
 # essential methods/functions in custom scripts/PoC (such as function poc())
 ESSENTIAL_MODULE_METHODS = ['poc']
