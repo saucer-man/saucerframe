@@ -62,9 +62,8 @@ def setpaths():
     #print(root_path,paths.DATA_PATH,paths.SCRIPT_PATH,paths.OUTPUT_PATH,paths.CONFIG_PATH)
     #print(paths.WEAK_PASS,paths.LARGE_WEAK_PASS,paths.UA_LIST_PATH)
 
-def banner(self):
-    text = "\033[1;%dm%s \033[0m" % (COLOR.blue, BANNER)
-    print(text)
+def banner():
+    outputscreen.blue(BANNER)
 
 # 将'192.168.1.1 -192.168.1.100'分解成ip地址列表
 def gen_ip(ip_range):
