@@ -5,7 +5,7 @@ def poc(url):
     if 'http' not in url:
         url = 'http://' + url
 
-    with open(paths.DATA_PATH + '\source_leak_check_payload.txt') as f:
+    with open(paths.DATA_PATH + '/source_leak_check_payload.txt') as f:
         payloads = f.read().splitlines()
 
     headers = {
