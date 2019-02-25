@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright (c) saucerman (https://xiaogeng.top)
+Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
 """
 pass
