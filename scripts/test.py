@@ -1,7 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# project = https://github.com/Xyntax/POC-T
-# author = i@cdxy.me
+
+"""
+Copyright (c) saucerman (https://xiaogeng.top)
+See the file 'LICENSE' for copying permission
+"""
 
 """
 测试用例
