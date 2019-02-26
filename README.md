@@ -9,7 +9,7 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 # 特点
 
-- 支持多线程并发
+- 支持多线程并发/协程
 - 指定目标支持多种方式
     - 指定单个目标
     - 从文本种获取目标
@@ -21,6 +21,9 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 (thinkphp5远程代码执行shodan批量扫描)
 
 # 更新日志
+- 2019-02-26
+
+增加协程模式，利用gevent模块实现异步请求。
 
 - 2018-12-15 
 
@@ -34,54 +37,58 @@ saucerframe是一个基于python3的开源渗透测试框架，支持多线程�
 
 
 ```
-查看帮助信息:
-    -h, --help            show this help message and exit
+usage: python3 saucerframe.py -s thinkphp_rce -aS "thinkphp"
 
-指定线程:(可选，默认10)
-    Decide the threads of engine
+optional arguments:
+  -h, --help            show this help message and exit
 
-    -t THREAD_NUM, --thread THREAD_NUM
-                            num of threads, 10 by default
+Engine:
+  Decide the working way of engine
 
-加载POC脚本(必选)
-    Choice script you want to use
+  -eT                   Multi-Threaded engine (default choice)
+  -eG                   Gevent engine (single-threaded with asynchronous)
+  -t THREAD_NUM, --thread THREAD_NUM
+                        num of threads, default 30
 
-    -s/--script SCRIPT_NAME 
+Script:
+  Choice script you want to use
+
+  -s SCRIPT_NAME, --script SCRIPT_NAME
                         load script by name (-s jboss-rce)
-    --show                show available script names in ./script/ and exit
+  --show                show available script names in ./script/ and exit
 
-指定目标(必选)
-    At least one of these optionshas to be provided to define the target(s)
+Target:
+  At least one of these optionshas to be provided to define the target(s)
 
-    -iU TARGET            scan a single target (e.g. www.wooyun.org)
-    -iF FILE              load targets from targetFile (e.g. wooyun_domain.txt)
-    -iR START-END         array from int(start) to int(end) (e.g.
+  -iU TARGET            scan a single target (e.g. www.wooyun.org)
+  -iF FILE              load targets from targetFile (e.g. wooyun_domain.txt)
+  -iR START-END         array from int(start) to int(end) (e.g.
                         192.168.1.1-192.168.2.100)
-    -iN IP/MASK           generate IP from IP/MASK. (e.g. 192.168.1.0/24)
+  -iN IP/MASK           generate IP from IP/MASK. (e.g. 192.168.1.0/24)
 
-    -API:
-        -aZ DORK, --zoomeye DORK
-                            ZoomEye dork (e.g. "zabbix port:8080")
-        -aS DORK, --shodan DORK
-                            Shodan dork.
-        -aG DORK, --google DORK
-                            Google dork (e.g. "inurl:admin.php")
-        -aF DORK, --fofa DORK
-                            FoFa dork (e.g. "banner=users && protocol=ftp")
-        --limit NUM           Maximum searching results (default:50)
-        --offset OFFSET       Search offset to begin getting results from
-                            (default:0)
-        --search-type TYPE    [ZoomEye] search type used in ZoomEye API, web or host
-                            (default:host)
-        --gproxy PROXY        Use proxy (e.g. "sock5 127.0.0.1 7070" or "http
-                            127.0.0.1 1894"
+API:
+  -aZ DORK, --zoomeye DORK
+                        ZoomEye dork (e.g. "zabbix port:8080")
+  -aS DORK, --shodan DORK
+                        Shodan dork.
+  -aG DORK, --google DORK
+                        Google dork (e.g. "inurl:admin.php")
+  -aF DORK, --fofa DORK
+                        FoFa dork (e.g. "banner=users && protocol=ftp")
+  --limit NUM           Maximum searching results (default:50)
+  --offset OFFSET       Search offset to begin getting results from
+                        (default:0)
+  --search-type TYPE    [ZoomEye] search type used in ZoomEye API, web or host
+                        (default:host)
+  --gproxy PROXY        Use proxy (e.g. "sock5 127.0.0.1 7070" or "http
+                        127.0.0.1 1894"
 
-文件输出:(可选)
-    Use those options to decide output
+Output:
+  Use those options to decide output
 
-    -o OUTPUT_PATH, --output OUTPUT_PATH
-                            output file name. default in ./output/
-    -oF, --no-file        disable file output
+  -o OUTPUT_PATH, --output OUTPUT_PATH
+                        output file name. default in ./output/
+  -oF, --no-file        disable file output
 ```
 
 # POC编写
