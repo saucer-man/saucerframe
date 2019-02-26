@@ -6,6 +6,7 @@ Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
 """
 
+import gevent
 import sys
 import threading
 import time
@@ -18,6 +19,7 @@ from lib.utils.console import getTerminalSize
 def initEngine():
     # init control parameter
     th.result = []
+    th.thread_mode = True if conf.engine_mode == "multi_threaded" else False
     th.thread_count = th.thread_num = conf.thread_num
     th.module_name = conf.module_name
     th.module_path = conf.module_path 
@@ -28,8 +30,7 @@ def initEngine():
     th.scan_count = th.found_count = 0 
     th.is_continue = True 
     th.console_width = getTerminalSize()[0] - 2
-    th.start_time = time.time() 
-    setThreadLock() 
+    th.start_time = time.time()
     msg = '[+] Set the number of thread: %d' % th.thread_num 
     outputscreen.success(msg) 
 
@@ -44,12 +45,12 @@ def setThreadLock():
 
 def scan():
     while True:
-        th.load_lock.acquire()
+        if th.thread_mode: th.load_lock.acquire()
         if th.target.qsize() > 0 and th.is_continue: 
             payload = str(th.target.get(timeout=1.0))
-            th.load_lock.release() 
+            if th.thread_mode: th.load_lock.release() 
         else:
-            th.load_lock.release() 
+            if th.thread_mode:th.load_lock.release() 
             break
         try:
             status = th.module_obj.poc(payload) 
@@ -64,16 +65,25 @@ def scan():
 
 def run():
     initEngine()
-    for i in range(th.thread_num): 
-        t = threading.Thread(target=scan, name=str(i))
-        t.setDaemon(True)
-        t.start()
-    # It can quit with Ctrl-C
-    while 1:
-        if th.thread_count > 0 and th.is_continue:
-            time.sleep(0.01)
-        else:
-            break
+    if th.thread_mode:
+        # set lock for multi_threaded mode   
+        setThreadLock() 
+        outputscreen.success('[+] Set working way Multi-Threaded mode')
+        for i in range(th.thread_num): 
+            t = threading.Thread(target=scan, name=str(i))
+            t.setDaemon(True)
+            t.start()
+        # It can quit with Ctrl-C
+        while th.thread_count > 0 and th.is_continue:
+                time.sleep(0.01)
+
+    # Coroutine mode
+    else:
+        outputscreen.success('[+] Set working way Coroutine mode')
+        #while th.target.qsize() > 0 and th.is_continue:
+        gevent.joinall([gevent.spawn(scan) for i in range(0, th.thread_num)])
+
+
     # save result to output file
     if not th.no_output:
         output2file(th.result) 
@@ -82,10 +92,10 @@ def run():
         outputscreen.error(th.errmsg)
 
 def resultHandler(status, payload):
-    th.output_screen_lock.acquire()
+    if th.thread_mode: th.output_screen_lock.acquire()
     sys.stdout.write(payload + " "*(th.console_width-len(payload)) + "\r")
     sys.stdout.flush()
-    th.output_screen_lock.release()
+    if th.thread_mode: th.output_screen_lock.release()
     if not status or status is POC_RESULT_STATUS.FAIL:
         return 
     # try again 
@@ -96,15 +106,15 @@ def resultHandler(status, payload):
     # vulnerable
     elif status is True or status is POC_RESULT_STATUS.SUCCESS:
         msg = '[+] ' + payload
-        th.output_screen_lock.acquire()
+        if th.thread_mode: th.output_screen_lock.acquire()
         outputscreen.info(msg) # 成功了
-        th.output_screen_lock.release()
+        if th.thread_mode: th.output_screen_lock.release()
         th.result.append(payload)
     else:
         msg = str(status)
-        th.output_screen_lock.acquire()
+        if th.thread_mode: th.output_screen_lock.acquire()
         outputscreen.info(msg)
-        th.output_screen_lock.release()
+        if th.thread_mode: th.output_screen_lock.release()
         th.result.append(msg)
 
     # get found number of payload +1
@@ -117,27 +127,27 @@ def resultHandler(status, payload):
             th.result = []
 
 def changeScanCount(num): 
-    th.scan_count_lock.acquire()
+    if th.thread_mode: th.scan_count_lock.acquire()
     th.scan_count += num
-    th.scan_count_lock.release()
+    if th.thread_mode: th.scan_count_lock.release()
 
 def output2file(msg): 
-    th.file_lock.acquire()
+    if th.thread_mode: th.file_lock.acquire()
     f = open(th.output_path, 'a')
     for res in msg:
         f.write(res + '\n')
     f.close()
-    th.file_lock.release()
+    if th.thread_mode: th.file_lock.release()
 
 def changeFoundCount(num):
-    th.found_count_lock.acquire()
+    if th.thread_mode: th.found_count_lock.acquire()
     th.found_count += num
-    th.found_count_lock.release()
+    if th.thread_mode: th.found_count_lock.release()
 
 def changeThreadCount(num): 
-    th.thread_count_lock.acquire()
+    if th.thread_mode: th.thread_count_lock.acquire()
     th.thread_count += num
-    th.thread_count_lock.release()
+    if th.thread_mode: th.thread_count_lock.release()
 
 def printProgress(): 
     msg = '%s found | %s remaining | %s scanned in %.2f seconds' % (
