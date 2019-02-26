@@ -6,6 +6,8 @@ Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
 """
 
+from gevent import monkey
+monkey.patch_all()
 import os
 from lib.parse.cmdline import cmdLineParser
 from lib.core.common import outputscreen, setpaths, banner
@@ -17,15 +19,18 @@ def main():
     """
     main fuction of saucerframe 
     """
-    banner()
+
+    # anyway output thr banner information
+    banner() 
+    
     # set paths of project 
-    paths.ROOT_PATH = os.getcwd()
+    paths.ROOT_PATH = os.getcwd() 
     setpaths()
     
     # received command >> cmdLineOptions
     cmdLineOptions.update(cmdLineParser().__dict__)
     
-    # loader script,target,threads,output_file from cmdLineOptions
+    # loader script,target,working way(threads? gevent?),output_file from cmdLineOptions
     # and send it to conf
     initOptions(cmdLineOptions) 
 
