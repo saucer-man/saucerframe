@@ -37,7 +37,8 @@ def checkShow(args):
         outputscreen.success('[+] Script Name ')
         order = 1
         for module in module_name_list:
-            if module != '__init__.py' and os.path.splitext(module)[1] == '.py':
+            # only show useful scripts
+            if module not in ['__init__.py','test.py'] and os.path.splitext(module)[1] == '.py':
                 outputscreen.success(str(order)+ '. ' +module)
                 order += 1
         msg = '\n' + ' ' * 20 + 'Total: %d' % (order-1)
@@ -46,11 +47,25 @@ def checkShow(args):
 
 
 def EngineRegister(args):
-    # init threads num
-    if args.thread_num > 100 or args.thread_num < 1:
-        msg = '[*] Invalid input in [-t](range: 1 to 100), has changed to default(10)'
+    # if the engine mode is conflicting
+    if args.engine_thread and args.engine_gevent:
+        outputscreen.error("Cannot use Multi-Threaded mode and Coroutine mode at the same time")
+        outputscreen.error('Use [-eT] to set Multi-Threaded mode or [-eG] to set Coroutine mode')
+        sys.exit()
+
+    # else if engine mode is Coroutine mode
+    elif args.engine_gevent:
+        conf.engine_mode = 'coroutine'
+    
+    # else if engine mode is Multi-Threaded mode
+    else:
+        conf.engine_mode = "multi_threaded"
+
+    # set threads num
+    if args.thread_num > 200 or args.thread_num < 1:
+        msg = '[*] Invalid input in [-t](range: 1 to 200), has changed to default(30)'
         outputscreen.warning(msg)
-        conf.thread_num = 10
+        conf.thread_num = 30
         return 
     conf.thread_num = args.thread_num
 
