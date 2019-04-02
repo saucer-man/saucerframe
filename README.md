@@ -1,7 +1,7 @@
 # Saucerframe
 [![PyPI version](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/)  [![License](https://img.shields.io/badge/license-GPLv2-red.svg)](https://raw.githubusercontent.com/sqlmapproject/sqlmap/master/LICENSE) 
 
-saucerframe是一个基于python3的开源渗透测试框架，支持多线程并发，支持多种指定目标方式，可用于`爆破`|`批量POC`。
+saucerframe是一个基于python3的开源批量POC检测框架，支持多线程并发，支持多种指定目标方式，可用于`爆破`|`批量POC`。
 
 框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
 
