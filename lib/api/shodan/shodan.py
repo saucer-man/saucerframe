@@ -10,8 +10,7 @@ import sys
 from lib.core.data import paths,conf
 from lib.core.common import outputscreen
 from lib.utils.config import ConfigFileParser
-from thirdlib.shodan.client import Shodan
-from thirdlib.shodan.exception import APIError
+from shodan import Shodan, APIError
 
 class ShodanBase:
     def __init__(self, query, limit, offset):
