@@ -13,12 +13,12 @@ from gevent.queue import Queue
 from lib.core.data import paths
 import requests
 from urllib.parse import urlparse
-headers = {
-        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
-        }
+
 def poc(url):
     # url = "http://www.example.org/default.html?ct=32&op=92&item=98"
     # --> http://www.example.org
+    if url[:4] != "http":
+        url = "http://" + url
     o = urlparse(url)
     url = o.scheme + "://" + o.netloc
     result = []
@@ -28,13 +28,18 @@ def poc(url):
             payloads.put(payload)
     # 这里设置100个协程，payload有144个
     gevent.joinall([gevent.spawn(bak_scan, url, payloads, result) for i in range(100)])
-    return result
+    if result:
+        return result
+    else:
+        return False
 
 def bak_scan(url, payloads, result):
+    headers = {
+        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36"
+        }
     while not payloads.empty():
         payload = payloads.get()
         vulnurl = url + "/" + payload
-        print("test"+vulnurl)
         try:
             flag = 0
             # 如果是备份文件则不需要下载，只需要head方法获取头部信息即可，否则文件较大会浪费大量的时间
