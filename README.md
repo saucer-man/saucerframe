@@ -29,14 +29,18 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 
 - 2018-12-15 
 
-将第三方库colorama、IPy、shodan放进thirdlib中直接引用，减少依赖包的安装
+将第三方库colorama、IPy放进thirdlib中直接引用，减少依赖包的安装
 
 - 2018-12-10 
 
 测试框架编写完成
 
 # Usage
-
+```
+git clone https://github.com/saucer-man/saucerframe.git
+cd saucerframe
+pip install -r requirement.txt 
+```
 
 ```
 usage: python3 saucerframe.py -s thinkphp_rce -aS "thinkphp"
