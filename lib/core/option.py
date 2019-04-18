@@ -29,7 +29,6 @@ def initOptions(args):
     Output(args)
 
 
-
 def checkShow(args):
     # if show scripts 
     if args.show_scripts:
@@ -53,21 +52,20 @@ def EngineRegister(args):
         outputscreen.error('Use [-eT] to set Multi-Threaded mode or [-eG] to set Coroutine mode')
         sys.exit()
 
-    # else if engine mode is Coroutine mode
-    elif args.engine_gevent:
-        conf.engine_mode = 'coroutine'
-    
     # else if engine mode is Multi-Threaded mode
-    else:
+    elif args.engine_thread:
         conf.engine_mode = "multi_threaded"
+        # set threads num
+        if args.thread_num > 200 or args.thread_num < 1:
+            msg = '[*] Invalid input in [-t](range: 1 to 200), has changed to default(30)'
+            outputscreen.warning(msg)
+            conf.thread_num = 30
+            return 
+        conf.thread_num = args.thread_num
 
-    # set threads num
-    if args.thread_num > 200 or args.thread_num < 1:
-        msg = '[*] Invalid input in [-t](range: 1 to 200), has changed to default(30)'
-        outputscreen.warning(msg)
-        conf.thread_num = 30
-        return 
-    conf.thread_num = args.thread_num
+    # else if engine mode is Coroutine mode
+    else:
+        conf.engine_mode = 'coroutine'
 
 def ScriptRegister(args):
 
@@ -124,7 +122,7 @@ def ScriptRegister(args):
                 sys.exit(0)
     except ImportError as e:
         msg = "[-] Your current script [%s.py] caused this exception\n%s\n%s" \
-                   % (_name, '[Error Msg]: ' + str(e), 'Maybe you can download this module from pip or easy_install')
+                   % (conf.module_name, '[Error Msg]: ' + str(e), 'Maybe you can download this module from pip or easy_install')
         outputscreen.error(msg)
         sys.exit(0)
 
@@ -161,8 +159,8 @@ def TargetRegister(args):
             if (len(lists))>100000:
                 warnmsg = "[*] Loading %d targets, Maybe it's too much, continue? [y/N]" % (len(lists))
                 outputscreen.warning(warnmsg)
-                flag =input()
-                if a in ('Y', 'y', 'yes', 'YES','Yes'):
+                flag = input()
+                if flag in ('Y', 'y', 'yes', 'YES','Yes'):
                     pass
                 else:
                     msg = '[-] User quit!'
@@ -211,7 +209,7 @@ def TargetRegister(args):
             warnmsg = "Loading %d targets, Maybe it's too much, continue? [y/N]" % (len(lists))
             outputscreen.warning(warnmsg)
             flag =input()
-            if a in ('Y', 'y', 'yes', 'YES','Yes'):
+            if flag in ('Y', 'y', 'yes', 'YES','Yes'):
                 pass
             else:
                 msg = 'User quit!'
