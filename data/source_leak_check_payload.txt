@@ -1,7 +1,7 @@
-/.git/config
-/.svn/entries
-/.hg
-/WEB-INF/web.xml
+.git/config
+.svn/entries
+.hg
+WEB-INF/web.xml
 2015.zip
 2015.rar
 2015.gz
