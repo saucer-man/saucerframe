@@ -3,8 +3,6 @@
 
 saucerframe是一个基于python3的开源批量POC检测框架，支持多线程并发，支持多种指定目标方式，可用于`爆破`|`批量POC`。
 
-框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
-
 **本项目用来交流学习，切勿用来做违法之事**
 
 # 特点
@@ -21,6 +19,10 @@ saucerframe是一个基于python3的开源批量POC检测框架，支持多线�
 (thinkphp5远程代码执行shodan批量扫描)
 
 # 更新日志
+- 2019-04-18
+
+更改默认并发方式为协程，自动根据扫描数量确定异步并发数量，优化了部分代码逻辑
+
 - 2019-02-26
 
 增加协程模式，利用gevent模块实现异步请求。
@@ -147,3 +149,6 @@ def poc(url)
 
 因为一个人的精力有限，如果您在利用本框架中编写了POC，欢迎通过Issues贡献出您的POC或者邮箱联系我(我的邮箱w502325@qq.com)。我会在wiki贴出插件信息和作者。
 
+# 感谢
+
+框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
