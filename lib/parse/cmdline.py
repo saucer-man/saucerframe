@@ -18,9 +18,9 @@ def cmdLineParser():
     # engine
     engine = parser.add_argument_group("Engine", "Decide the working way of engine")
     engine.add_argument('-eT', dest="engine_thread", default=False, action='store_true',
-                        help='Multi-Threaded engine (default choice)')
+                        help='Multi-Threaded engine')
     engine.add_argument('-eG', dest="engine_gevent", default=False, action='store_true',
-                        help='Gevent engine (single-threaded with asynchronous)')
+                        help='Gevent engine (single-threaded with asynchronous, default choice)')
     engine.add_argument("-t","--thread",  dest="thread_num", type=int, default=30,
                         help="num of threads, default 30")
     
