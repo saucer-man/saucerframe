@@ -24,8 +24,8 @@ def poc(url):
     with open(paths.DATA_PATH + '/source_leak_check_payload.txt') as f:
         for payload in f.read().splitlines():
             payloads.put(payload)
-
-    gevent.joinall([gevent.spawn(bak_scan, url, payloads, result) for i in range(len(bak_list))])
+    # 这里设置100个协程，payload有144个
+    gevent.joinall([gevent.spawn(bak_scan, url, payloads, result) for i in range(len(100))])
     return result
 
 def bak_scan(url, payloads, result):
