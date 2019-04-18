@@ -113,7 +113,7 @@ def resultHandler(status, payload):
     elif status is True or status is POC_RESULT_STATUS.SUCCESS:
         msg = '[+] ' + payload
         if th.thread_mode: th.output_screen_lock.acquire()
-        outputscreen.info(msg) # 成功了
+        outputscreen.info(msg) 
         if th.thread_mode: th.output_screen_lock.release()
         th.result.append(payload)
     # If there is a lot of information, Line feed display
