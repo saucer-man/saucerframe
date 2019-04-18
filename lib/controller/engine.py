@@ -20,7 +20,6 @@ def initEngine():
     # init control parameter
     th.result = []
     th.thread_mode = True if conf.engine_mode == "multi_threaded" else False
-    th.thread_count = th.thread_num = conf.thread_num
     th.module_name = conf.module_name
     th.module_path = conf.module_path 
     th.module_obj = conf.module_obj 
@@ -30,16 +29,23 @@ def initEngine():
     th.scan_count = th.found_count = 0 
     th.is_continue = True 
     th.console_width = getTerminalSize()[0] - 2
+    # set concurrent number
+    if th.thread_mode:
+        th.concurrent_count = th.concurrent_num = conf.thread_num
+    else:
+        if th.target.qsize() < 150:
+            th.concurrent_count = th.concurrent_num = th.target.qsize()
+        else:
+            th.concurrent_count = th.concurrent_num = 150
     th.start_time = time.time()
-    msg = '[+] Set the number of thread: %d' % th.thread_num 
-    outputscreen.success(msg) 
+
 
 def setThreadLock(): 
     # set thread lock 
     th.output_screen_lock = threading.Lock()
     th.found_count_lock = threading.Lock()
     th.scan_count_lock = threading.Lock()
-    th.thread_count_lock = threading.Lock()
+    th.concurrent_count_lock = threading.Lock()
     th.file_lock = threading.Lock() 
     th.load_lock = threading.Lock() 
 
@@ -59,9 +65,9 @@ def scan():
             th.errmsg = traceback.format_exc()
             th.is_continue = False
         # set scanned count + 1
-        changeScanCount(1) 
-    # set running thread -1
-    changeThreadCount(-1) # 
+        change_scan_count(1) 
+    # set running concurrent count -1
+    change_concurrent_count(-1) # 
 
 def run():
     initEngine()
@@ -69,20 +75,20 @@ def run():
         # set lock for multi_threaded mode   
         setThreadLock() 
         outputscreen.success('[+] Set working way Multi-Threaded mode')
-        for i in range(th.thread_num): 
+        outputscreen.success('[+] Set the number of thread: %d' % th.concurrent_num) 
+        for i in range(th.concurrent_num): 
             t = threading.Thread(target=scan, name=str(i))
             t.setDaemon(True)
             t.start()
         # It can quit with Ctrl-C
-        while th.thread_count > 0 and th.is_continue:
+        while th.concurrent_count > 0 and th.is_continue:
                 time.sleep(0.01)
 
     # Coroutine mode
     else:
         outputscreen.success('[+] Set working way Coroutine mode')
-        #while th.target.qsize() > 0 and th.is_continue:
-        gevent.joinall([gevent.spawn(scan) for i in range(0, th.thread_num)])
-
+        outputscreen.success('[+] Set the number of Coroutine: %d' % th.concurrent_num) 
+        gevent.joinall([gevent.spawn(scan) for i in range(0, th.concurrent_num)])
 
     # save result to output file
     if not th.no_output:
@@ -100,7 +106,7 @@ def resultHandler(status, payload):
         return 
     # try again 
     elif status is POC_RESULT_STATUS.RETRAY:
-        changeScanCount(-1) 
+        change_scan_count(-1) 
         th.target.put(payload) 
         return
     # vulnerable
@@ -110,6 +116,14 @@ def resultHandler(status, payload):
         outputscreen.info(msg) # 成功了
         if th.thread_mode: th.output_screen_lock.release()
         th.result.append(payload)
+    # If there is a lot of information, Line feed display
+    elif isinstance(status, list):
+        if th.thread_mode: th.output_screen_lock.acquire()
+        for msg in status:
+            outputscreen.info(msg)
+            th.result.append(msg)
+        if th.thread_mode: th.output_screen_lock.release()
+        
     else:
         msg = str(status)
         if th.thread_mode: th.output_screen_lock.acquire()
@@ -118,7 +132,7 @@ def resultHandler(status, payload):
         th.result.append(msg)
 
     # get found number of payload +1
-    changeFoundCount(1) 
+    change_found_count(1) 
 
     # if result list is too large, save it to file and empty list
     if len(th.result) > 5000:
@@ -126,28 +140,27 @@ def resultHandler(status, payload):
             output2file(th.result) 
             th.result = []
 
-def changeScanCount(num): 
+def change_scan_count(num): 
     if th.thread_mode: th.scan_count_lock.acquire()
     th.scan_count += num
     if th.thread_mode: th.scan_count_lock.release()
 
 def output2file(msg): 
     if th.thread_mode: th.file_lock.acquire()
-    f = open(th.output_path, 'a')
-    for res in msg:
-        f.write(res + '\n')
-    f.close()
+    with open(th.output_path, 'a') as f:
+        for res in msg:
+            f.write(res + '\n')
     if th.thread_mode: th.file_lock.release()
 
-def changeFoundCount(num):
+def change_found_count(num):
     if th.thread_mode: th.found_count_lock.acquire()
     th.found_count += num
     if th.thread_mode: th.found_count_lock.release()
 
-def changeThreadCount(num): 
-    if th.thread_mode: th.thread_count_lock.acquire()
-    th.thread_count += num
-    if th.thread_mode: th.thread_count_lock.release()
+def change_concurrent_count(num): 
+    if th.thread_mode: th.concurrent_count_lock.acquire()
+    th.concurrent_count += num
+    if th.thread_mode: th.concurrent_count_lock.release()
 
 def printProgress(): 
     msg = '%s found | %s remaining | %s scanned in %.2f seconds' % (
