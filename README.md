@@ -147,7 +147,7 @@ def poc(url)
 
 本来不想重复造轮子，不过没找到python3版本的框架，干脆重写了一个python3的框架。但是POC的设计思想是不变的，有时间我将自己写过的一些脚本改成本项目的POC，传到项目中来。
 
-因为一个人的精力有限，如果您在利用本框架中编写了POC，欢迎通过Issues贡献出您的POC或者邮箱联系我(我的邮箱w502325@qq.com)。我会在wiki贴出插件信息和作者。
+因为一个人的精力有限，如果您在利用本框架中编写了POC，欢迎通过Issues贡献出您的POC或者邮箱联系我(我的邮箱w502325@qq.com)。我会在[wiki](https://github.com/saucer-man/saucerframe/wiki/%E6%B5%8B%E8%AF%95%E8%84%9A%E6%9C%AC)贴出插件信息和作者。
 
 # 感谢
 
