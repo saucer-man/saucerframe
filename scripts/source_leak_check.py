@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# date:2019/04/18
 
 """
 Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
+检测信息泄露，协程异步请求
 """
 
 import gevent
@@ -25,13 +27,14 @@ def poc(url):
         for payload in f.read().splitlines():
             payloads.put(payload)
     # 这里设置100个协程，payload有144个
-    gevent.joinall([gevent.spawn(bak_scan, url, payloads, result) for i in range(len(100))])
+    gevent.joinall([gevent.spawn(bak_scan, url, payloads, result) for i in range(100)])
     return result
 
 def bak_scan(url, payloads, result):
     while not payloads.empty():
         payload = payloads.get()
-        vulnurl = url + payload
+        vulnurl = url + "/" + payload
+        print("test"+vulnurl)
         try:
             flag = 0
             # 如果是备份文件则不需要下载，只需要head方法获取头部信息即可，否则文件较大会浪费大量的时间
