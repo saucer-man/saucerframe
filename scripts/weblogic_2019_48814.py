@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # CNVD-C-2019-48814 Weblogic wls9_async_response 反序列化RCE
-# 
+# https://saucer-man.com/information_security/129.html
 """
 Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
