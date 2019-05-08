@@ -19,13 +19,17 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 (thinkphp5远程代码执行shodan批量扫描)
 
 # 更新日志
+- 2019-05-08
+
+增加plugin目录，逐步添加plugin，方便poc调用。目前已添加随机user-agent
+
 - 2019-04-18
 
-更改默认并发方式为协程，自动根据扫描数量确定异步请求数量，优化了部分代码逻辑，速度提升。
+更改默认并发方式为协程，自动根据扫描数量确定异步请求数量，优化了部分代码逻辑，速度提升
 
 - 2019-02-26
 
-增加协程模式，利用gevent模块实现异步请求。
+增加协程模式，利用gevent模块实现异步请求
 
 - 2018-12-15 
 
@@ -36,12 +40,20 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 测试框架编写完成
 
 # Usage
+
+安装方法：
 ```
-git clone https://github.com/saucer-man/saucerframe.git
+git clone https://github.com/saucer-man/saucerframe.git 
 cd saucerframe
 pip install -r requirement.txt 
 ```
 
+使用方法：
+```
+python3 saucerframe.py -s script-name -iU target-url 
+```
+
+具体的参数说明：
 ```
 usage: python3 saucerframe.py -s thinkphp_rce -aS "thinkphp"
 
@@ -99,59 +111,7 @@ Output:
 
 # POC编写
 
-框架与POC的接口调用位于/lib/controller/engine.py，POC接收目标字符串，返回`Retry(2)`|`True(1)`/`False(0)`，当return其他内容时，则直接输出该内容
-
-**注意：POC模块命名必须为`poc`，或者在/lib/core/setting中修改/增加module命名**
-
-示例:
-
-1、编写一个简单POC验证是否存在git信息泄露，这里我们验证目录下是否存在`/.git/config`
-
-```python
-import requests
-def poc(target_url):
-    url = 'target_url'+'/.git/config'
-    try:
-        r = requests.get(url)
-        if r.status_code == 200 and 'repository' in r.text: # 如果在git信息泄露
-            return True # 也可以返回1
-        else: # 不存在信息泄露
-            return Flase #也可以返回0
-    except ConnectionError:
-        return 2     # 把target_url再次加入任务队列重新验证(本次验证作废)
-```
-
-2、编写爆破脚本，指定目标为爆破密码
-
-```python
-def poc(target_password):
-    url = 'http://xxx.com/login.php?pass=' + target_password
-    try:
-        r = requests.get(url)
-        if 'success' in r.text:
-            return True  # 验证成功，屏幕结果输出为123456
-            # return url   # 返回其他字符串，屏幕结果输出为"http://xxx.com/login.php?pass=123456"
-            else
-        return False # 验证失败，无输出
-        return 0     # 同上
-    except ConnectionError:
-        return 2     # 把target_url再次加入任务队列重新验证(本次验证作废)
-```
-
-**建议在脚本中增加错误处理，否则发生错误，整个程序则会停止。**
-
-```python
-def poc(url)
-    try:
-    # 这里写脚本
-    except:
-        return False
-```
-# 关于POC库
-
-本来不想重复造轮子，不过没找到python3版本的框架，干脆重写了一个python3的框架。但是POC的设计思想是不变的，有时间我将自己写过的一些脚本改成本项目的POC，传到项目中来。
-
-因为一个人的精力有限，如果您在利用本框架中编写了POC，欢迎通过Issues贡献出您的POC或者邮箱联系我(我的邮箱w502325@qq.com)。我会在[wiki](https://github.com/saucer-man/saucerframe/wiki/%E6%B5%8B%E8%AF%95%E8%84%9A%E6%9C%AC)贴出插件信息和作者。
+介绍已移至[wiki](https://github.com/saucer-man/saucerframe/wiki)
 
 # 感谢
 
