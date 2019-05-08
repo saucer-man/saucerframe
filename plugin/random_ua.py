@@ -81,6 +81,3 @@ def get_phone_ua():
                    '(KHTML, like Gecko)', chrome_version, 'Safari/537.36']
                   )
     return random_ua
-
-for i in range(20):
-    print(get_phone_ua())
