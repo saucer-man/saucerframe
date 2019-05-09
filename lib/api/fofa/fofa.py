@@ -65,7 +65,7 @@ def handle_fofa(query, limit, offset=0):
         resp = json.loads(resp)
         if resp["error"] is None:
             for item in resp.get('results'):
-                cong.target.append(item[0])
+                conf.target.append(item[0])
             if resp.get('size') >= 100:
                 outputscreen.warning("{0} items found! just 100 returned....".format(resp.get('size')))
     except Exception as e:
