@@ -5,7 +5,6 @@
 Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
 """
-
 class COLOR:
     black = 30  #  黑色
     red = 31  #  红色
@@ -15,7 +14,8 @@ class COLOR:
     purple = 35  #  紫红色
     cyan = 36  #  青蓝色
     white = 37  #  白色
-    
+
+
 class POC_RESULT_STATUS:
     FAIL = 0
     SUCCESS = 1
