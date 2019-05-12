@@ -5,9 +5,8 @@
 Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
 """
-
-import sys
 import argparse
+
 
 def cmdLineParser():
     """
@@ -50,8 +49,10 @@ def cmdLineParser():
     api.add_argument('-aG', '--google', metavar='DORK', dest="google_dork", type=str, default='',
                      help='Google dork (e.g. "inurl:admin.php")') 
     api.add_argument('-aF', '--fofa', metavar='DORK', dest="fofa_dork", type=str, default='',
-                     help='FoFa dork (e.g. "banner=users && protocol=ftp")') 
-    api.add_argument('--limit', metavar='NUM', dest="api_limit", type=int, default=50,
+                     help='FoFa dork (e.g. "banner=users && protocol=ftp")')
+    api.add_argument('-aC', '--censys', metavar='DORK', dest="censys_dork", type=str, default='',
+                     help='censys dork ')
+    api.add_argument('--limit', metavar='NUM', dest="api_limit", type=int, default=100,
                      help='Maximum searching results (default:50)') 
     api.add_argument('--offset', metavar='OFFSET', dest="api_offset", type=int, default=0,
                      help="Search offset to begin getting results from (default:0)")
@@ -59,19 +60,16 @@ def cmdLineParser():
                      help="[ZoomEye] search type used in ZoomEye API, web or host (default:host)") # 搜索类型
     # proxy
     proxy = parser.add_argument_group('PROXY')
-    api.add_argument('--gproxy', metavar='PROXY', dest="google_proxy", action="store", default=None,
+    proxy.add_argument('--gproxy', metavar='PROXY', dest="google_proxy", action="store", default=None,
                      help="Use proxy (e.g. \"sock5 127.0.0.1 7070\" or \"http 127.0.0.1 1894\"")
-
 
     # output
     output = parser.add_argument_group("Output","Use those options to decide output")
     output.add_argument("-o","--output", dest="output_path", type=str, default="",
                         help="output file name. default in ./output/")
-    output.add_argument("-oF", "--no-file", dest="no_output", default=False, action="store_false",
-                        help="disable file output")
+    output.add_argument("-v", dest="logging_level", type=int, default=0,
+                        help="logging level, default INFO,(eg -v 1) to output more")
 
-    if len(sys.argv) == 1:
-        sys.argv.append("-h")
     args = parser.parse_args()
     return args
 
