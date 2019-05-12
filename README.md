@@ -16,10 +16,11 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
     - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)、[Censys](https://censys.io)
 
 ![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
-(thinkphp5远程代码执行shodan批量扫描)
+(利用Zoomeye批量扫描thinkphp5远程代码执行漏洞主机)
 
-# 更新日志
 <details>
+<summary># 更新日志</summary>
+
 
 - 2019-05-09
 增加logging模块，支持输出等级；增加censys api调用；IPY替换为内置库ipaddress、imp更新为importlib模块；规范大部分函数、变量命名；修改了程序逻辑。
@@ -42,7 +43,7 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 </details>
 
 
-# Usage
+# 使用
 
 安装方法：
 ```
