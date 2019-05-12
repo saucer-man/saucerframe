@@ -8,34 +8,57 @@ See the file 'LICENSE' for copying permission
 
 from gevent import monkey
 monkey.patch_all()
-import os
 from lib.parse.cmdline import cmdLineParser
-from lib.core.common import outputscreen, setpaths, banner
-from lib.core.data import paths, conf, cmdLineOptions
-from lib.core.option import initOptions
+from lib.core.common import colorprint, set_paths, banner
+from lib.core.data import cmdLineOptions
+from lib.core.option import init_options
 from lib.controller.engine import run
+import os
+import time
+
+
+def module_path():
+    """
+    This will get us the program's directory
+    """
+    return os.path.dirname(os.path.realpath(__file__))
+
+
+def check_environment():
+    try:
+        os.path.isdir(module_path())
+    except Exception:
+        err_msg = "your system does not properly handle non-ASCII paths. "
+        err_msg += "Please move the pocsuite's directory to the other location"
+        colorprint.red(err_msg)
+        raise SystemExit
+
 
 def main():
-    """
-    main fuction of saucerframe 
-    """
+    try:
+        check_environment()
 
-    # anyway output thr banner information
-    banner() 
-    
-    # set paths of project 
-    paths.ROOT_PATH = os.getcwd() 
-    setpaths()
-    
-    # received command >> cmdLineOptions
-    cmdLineOptions.update(cmdLineParser().__dict__)
-    
-    # loader script,target,working way(threads? gevent?),output_file from cmdLineOptions
-    # and send it to conf
-    initOptions(cmdLineOptions) 
+        # set paths of project
+        set_paths(module_path())
 
-    # run!
-    run()
+        # output banner information
+        banner() 
+
+        # received command >> cmdLineOptions
+        cmdLineOptions.update(cmdLineParser().__dict__)
+
+        # loader script,target,working way(threads? gevent?),output_file from cmdLineOptions
+        # and send it to conf
+        init_options(cmdLineOptions)
+
+        # run!
+        run()
+    except Exception as e:
+        print(e)
+
+    finally:
+        print("\n\n[*] shutting down at {0}\n".format(time.strftime("%X")))
+
 
 if __name__ == "__main__":
     main()
