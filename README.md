@@ -18,9 +18,9 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 ![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
 (利用Zoomeye批量扫描thinkphp5远程代码执行漏洞主机)
 
+# 更新历史
 <details>
-<summary># 更新日志</summary>
-
+<summary>点击查看/关闭</summary>
 
 - 2019-05-09
 增加logging模块，支持输出等级；增加censys api调用；IPY替换为内置库ipaddress、imp更新为importlib模块；规范大部分函数、变量命名；修改了程序逻辑。
