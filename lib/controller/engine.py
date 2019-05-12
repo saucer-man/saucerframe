@@ -40,7 +40,6 @@ def initEngine():
         else:
             th.concurrent_count = th.concurrent_num = 150
     th.start_time = time.time()
-    load_module()
 
 
 def load_module():
