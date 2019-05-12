@@ -8,7 +8,7 @@ See the file 'LICENSE' for copying permission
 
 from configparser import ConfigParser
 from lib.core.data import paths
-from lib.core.common import outputscreen
+from lib.core.common import colorprint
 
 
 class ConfigFileParser:
@@ -19,7 +19,7 @@ class ConfigFileParser:
             cf.read(paths.CONFIG_PATH)
             return cf.get(section=section, option=option)
         except:
-            outputscreen.warning('Missing essential options, please check your config-file.')
+            colorprint.cyan('Missing essential options, please check your config-file.')
             return ''
 
     def ZoomEyeEmail(self):
@@ -46,12 +46,11 @@ class ConfigFileParser:
     def google_engine(self):
         return self._get_option('google', 'search_engine')
 
-    # def CloudEyeApikey(self):
-    #     return self._get_option('cloudeye', 'api_key')
+    def censys_UID(self):
+        return self._get_option('censys', 'UID')
 
-    # def ColudEyePersonaldomain(self):
-    #     return self._get_option('cloudeye', 'personal_domain')
-
+    def censys_SECRET(self):
+        return self._get_option('censys', 'SECRET')
 
 
 
