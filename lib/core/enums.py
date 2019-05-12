@@ -15,7 +15,6 @@ class COLOR:
     cyan = 36  #  青蓝色
     white = 37  #  白色
 
-
 class POC_RESULT_STATUS:
     FAIL = 0
     SUCCESS = 1
