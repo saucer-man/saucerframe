@@ -11,16 +11,16 @@ import json
 import base64
 from lib.utils.config import ConfigFileParser
 from lib.core.common import colorprint
-from lib.core.data import paths,conf
+from lib.core.data import paths, conf, logger
 try:
     import requests
-except:
+except ImportError:
     colorprint.red("[-] Can't import requests")
     colorprint.cyan("[*] Try pip install requests")
     sys.exit()
 
-# verify email and key
-def check(email, key): 
+
+def check(email, key): # verify email and key
     if email and key:
         auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email, key)
         try:
@@ -30,7 +30,6 @@ def check(email, key):
         except Exception as e:
             return False
     return False
-
 
 
 def handle_fofa(query, limit, offset=0):
@@ -43,7 +42,8 @@ def handle_fofa(query, limit, offset=0):
             pass
         else:
             raise SystemExit  # will go to except block
-    except:
+    except Exception as e:
+        logger.debug(e)
         msg = '[*] Automatic authorization failed.'
         colorprint.cyan(msg)
         msg = '[*] Please input your FoFa Email and API Key below.'
