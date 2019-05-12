@@ -13,31 +13,34 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
     - 从文本种获取目标
     - 某一网段获取目标 e.g. 192.168.1.0/24
     - 某一ip段获取目标 192.168.1.0-192.168.2.33
-    - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)
+    - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)、[Censys](https://censys.io)
 
 ![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
 (thinkphp5远程代码执行shodan批量扫描)
 
 # 更新日志
-- 2019-05-08
+<details>
 
+- 2019-05-09
+增加logging模块，支持输出等级；增加censys api调用；IPY替换为内置库ipaddress、imp更新为importlib模块；规范大部分函数、变量命名；修改了程序逻辑。
+
+- 2019-05-08
 增加plugin目录，逐步添加plugin，方便poc调用。目前已添加随机user-agent
 
 - 2019-04-18
-
 更改默认并发方式为协程，自动根据扫描数量确定异步请求数量，优化了部分代码逻辑，速度提升
 
 - 2019-02-26
-
-增加协程模式，利用gevent模块实现异步请求
+增加协程模式，利用gevent模块实现异步请求。
 
 - 2018-12-15 
-
-将第三方库colorama、IPy放进thirdlib中直接引用，减少依赖包的安装
+将第三方库colorama、IPy放进thirdlib中直接引用，减少依赖包的安装。
 
 - 2018-12-10 
-
 测试框架编写完成
+
+</details>
+
 
 # Usage
 
@@ -63,8 +66,9 @@ optional arguments:
 Engine:
   Decide the working way of engine
 
-  -eT                   Multi-Threaded engine (default choice)
-  -eG                   Gevent engine (single-threaded with asynchronous)
+  -eT                   Multi-Threaded engine
+  -eG                   Gevent engine (single-threaded with asynchronous,
+                        default choice)
   -t THREAD_NUM, --thread THREAD_NUM
                         num of threads, default 30
 
@@ -93,11 +97,15 @@ API:
                         Google dork (e.g. "inurl:admin.php")
   -aF DORK, --fofa DORK
                         FoFa dork (e.g. "banner=users && protocol=ftp")
+  -aC DORK, --censys DORK
+                        censys dork
   --limit NUM           Maximum searching results (default:50)
   --offset OFFSET       Search offset to begin getting results from
                         (default:0)
   --search-type TYPE    [ZoomEye] search type used in ZoomEye API, web or host
                         (default:host)
+
+PROXY:
   --gproxy PROXY        Use proxy (e.g. "sock5 127.0.0.1 7070" or "http
                         127.0.0.1 1894"
 
@@ -106,7 +114,7 @@ Output:
 
   -o OUTPUT_PATH, --output OUTPUT_PATH
                         output file name. default in ./output/
-  -oF, --no-file        disable file output
+  -v LOGGING_LEVEL      logging level, default INFO,(eg -v 1) to output more
 ```
 
 # POC编写
