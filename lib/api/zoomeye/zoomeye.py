@@ -9,18 +9,18 @@ See the file 'LICENSE' for copying permission
 import json
 import sys
 
-from lib.core.data import paths,conf
+from lib.core.data import paths, conf
 from lib.utils.config import ConfigFileParser
-from lib.core.common import outputscreen
+from lib.core.common import colorprint
 try:
     import requests
 except:
-    outputscreen.error("[-] Can't import requests")
-    outputscreen.warning("[*] Try pip install requests")
+    colorprint.red("[-] Can't import requests")
+    colorprint.cyan("[*] Try pip install requests")
     sys.exit()
 
 class ZoomEye():
-    def __init__(self,username=None, password=None):
+    def __init__(self, username=None, password=None):
         self.username = username
         self.password = password
         self.token = ''
@@ -28,7 +28,7 @@ class ZoomEye():
 
     def auto_login(self):
         msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
-        outputscreen.success(msg)
+        colorprint.green(msg)
         try:
             self.username = ConfigFileParser().ZoomEyeEmail()
             self.password = ConfigFileParser().ZoomEyePassword()
@@ -40,24 +40,24 @@ class ZoomEye():
                 return
 
         msg = '[*] Automatic authorization failed.'
-        outputscreen.warning(msg)
+        colorprint.cyan(msg)
         self.manual_login()
 
     def manual_login(self):
         msg = '[*] Please input your ZoomEye Email and Password below.'
-        outputscreen.warning(msg)
+        colorprint.cyan(msg)
         self.username = input('[*] ZoomEye Username(Email): ').strip()
         self.password = input('[*] ZoomEye Password: ').strip()
         if not self.get_token():
             msg = '[-] Error ZoomEye username or password.'
-            outputscreen.error(msg)
+            colorprint.red(msg)
             sys.exit()
 
     def get_token(self):
         # Please access https://www.zoomeye.org/api/doc#login
         data = {
-        'username' : self.username,
-        'password' : self.password
+        'username': self.username,
+        'password': self.password
         }
         data_encoded = json.dumps(data)  # dumps 将 python 对象转换成 json 字符串
         res = requests.post('https://api.zoomeye.org/user/login', data=data_encoded)
@@ -131,10 +131,10 @@ def handle_zoomeye(query, limit = 50 , type='host', offset=0):
     info = z.resources_info().get('resources')
     if info:
         msg = '[+] Available ZoomEye search: (search:%s)' % (info.get('search', 'NO FOUND'))
-        outputscreen.success(msg)
+        colorprint.green(msg)
     else:
         msg = '[-] ZoomEye API authorization failed, Please re-run it and enter a new token.'
-        outputscreen.error(msg)
+        colorprint.red(msg)
         sys.exit()
     # 开始爬取
     limit += offset
