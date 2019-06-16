@@ -53,7 +53,7 @@ def set_paths(root_path):
     paths.SCRIPT_PATH = os.path.join(paths.ROOT_PATH, "scripts")
     paths.PLUGIN_PATH = os.path.join(paths.ROOT_PATH, "plugin")
     paths.OUTPUT_PATH = os.path.join(paths.ROOT_PATH, "output")
-    paths.CONFIG_PATH = os.path.join(paths.ROOT_PATH, "saucerframe.conf")
+    paths.CONFIG_PATH = os.path.join(paths.ROOT_PATH, "config.conf")
     if not os.path.exists(paths.SCRIPT_PATH):
         err_msg = "script file missing,it may cause some issues."
         colorprint.red(err_msg)
