@@ -41,7 +41,7 @@ def handle_fofa(query, limit, offset=0):
         if check(email, key):
             pass
         else:
-            raise SystemExit  # will go to except block
+            raise Exception("Automatic authorization failed")   # will go to except block
     except Exception as e:
         logger.debug(e)
         msg = '[*] Automatic authorization failed.'
