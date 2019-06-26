@@ -125,7 +125,7 @@ class ZoomEye():
         return data
 
 
-def handle_zoomeye(query, limit = 50 , type='host', offset=0):
+def handle_zoomeye(query, limit, type, offset):
     z = ZoomEye()
     z.auto_login()
     info = z.resources_info().get('resources')
@@ -137,14 +137,22 @@ def handle_zoomeye(query, limit = 50 , type='host', offset=0):
         colorprint.red(msg)
         sys.exit()
     # 开始爬取
-    limit += offset
-    for page_n in range(int(offset / 10), int((limit + 9) / 10)):
-        data = z.dork_search(query, page=page_n, resource=type)
+    result_count = 0
+    is_continue = True
+    page = 0
+    while is_continue:
+        data = z.dork_search(query, page=page, resource=type)
         if data:
             for i in data:
                 ip_str = i.get('ip')
                 if 'portinfo' in i:
                     ip_str = ip_str + ':' + str(i.get('portinfo').get('port'))
-                conf.target.put(ip_str)
+                result_count += 1
+                if result_count >= offset:
+                    conf.target.put(ip_str)
+                if conf.target.qsize() >= limit:
+                    is_continue = False
+                    break
+            page += 1
         else:
             break
