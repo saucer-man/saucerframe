@@ -25,7 +25,7 @@ def check(email, key): # verify email and key
         auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email, key)
         try:
             response = requests.get(auth_url)
-            if response.code == 200:
+            if response.status_code == 200:
                 return True
         except Exception as e:
             return False
@@ -55,18 +55,19 @@ def handle_fofa(query, limit, offset=0):
             colorprint.red(msg)
             sys.exit()
 
-    query = base64.b64encode(query)
-
-    request = "https://fofa.so/api/v1/search/all?email={0}&key={1}&qbase64={2}".format(email, key, query)
+    query = base64.b64encode(query.encode('utf-8')).decode('utf-8')
+    
+    # count how many result to search
+    size = limit + offset  
+    
+    request = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}"
     try:
-        response = requests.get(request)
-        resp = response.readlines()[0]
-        resp = json.loads(resp)
-        if resp["error"] is None:
-            for item in resp.get('results'):
-                conf.target.append(item[0])
-            if resp.get('size') >= 100:
-                colorprint.cyan("{0} items found! just 100 returned....".format(resp.get('size')))
+        response = requests.get(request).text
+        resp = json.loads(response)
+        if not resp["error"]:
+            for item in resp.get('results')[offset:]:
+                conf.target.put(item[0])
+
     except Exception as e:
         colorprint.red(e)
         sys.exit()
