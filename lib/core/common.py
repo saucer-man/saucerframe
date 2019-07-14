@@ -17,28 +17,28 @@ init(autoreset=True)
 class ColorPrint:
 
     @staticmethod
-    def white(s):
-        print(Style.BRIGHT+Fore.WHITE + str(s) + Fore.RESET+Style.RESET_ALL)
+    def white(s, end='\n', flush=False):
+        print(Style.BRIGHT+Fore.WHITE + str(s) + Fore.RESET+Style.RESET_ALL, end=end, flush=flush)
 
     @staticmethod
-    def green(s):
-        print(Style.BRIGHT+Fore.GREEN + str(s) + Fore.RESET+Style.RESET_ALL)
+    def green(s, end='\n', flush=False):
+        print(Style.BRIGHT+Fore.GREEN + str(s) + Fore.RESET+Style.RESET_ALL, end=end, flush=flush)
 
     @staticmethod
-    def cyan(s):
-        print(Style.BRIGHT+Fore.CYAN + str(s) + Fore.RESET+Style.RESET_ALL)
+    def cyan(s, end='\n', flush=False):
+        print(Style.BRIGHT+Fore.CYAN + str(s) + Fore.RESET+Style.RESET_ALL, end=end, flush=flush)
 
     @staticmethod
-    def red(s):
-        print(Style.BRIGHT+Fore.RED + str(s) + Fore.RESET+Style.RESET_ALL)
+    def red(s, end='\n', flush=False):
+        print(Style.BRIGHT+Fore.RED + str(s) + Fore.RESET+Style.RESET_ALL, end=end, flush=flush)
 
     @staticmethod
-    def blue(s):
-        print(Style.BRIGHT+Fore.BLUE + str(s) + Fore.RESET+Style.RESET_ALL)
+    def blue(s, end='\n', flush=False):
+        print(Style.BRIGHT+Fore.BLUE + str(s) + Fore.RESET+Style.RESET_ALL, end=end, flush=flush)
 
     @staticmethod
-    def yellow(s):
-        print(Style.BRIGHT+Fore.YELLOW + str(s) + Fore.RESET+Style.RESET_ALL)
+    def yellow(s, end='\n', flush=False):
+        print(Style.BRIGHT+Fore.YELLOW + str(s) + Fore.RESET+Style.RESET_ALL, end=end, flush=flush)
 
 
 colorprint = ColorPrint()
