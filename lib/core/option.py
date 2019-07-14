@@ -16,7 +16,6 @@ from lib.core.common import colorprint, gen_ip
 from lib.api.zoomeye.zoomeye import handle_zoomeye
 from lib.api.fofa.fofa import handle_fofa
 from lib.api.shodan.shodan import handle_shodan
-from lib.api.google.google import handle_google
 from lib.api.censys.censys import handle_censys
 
 def init_options(args):
@@ -53,17 +52,23 @@ def engine_register(args):
     # else if engine mode is Multi-Threaded mode
     elif args.engine_thread:
         conf.engine_mode = "multi_threaded"
-        # set threads num
-        if args.thread_num > 200 or args.thread_num < 1:
-            msg = '[*] Invalid input in [-t](range: 1 to 200), has changed to default(30)'
-            colorprint.cyan(msg)
-            conf.thread_num = 30
-            return 
-        conf.thread_num = args.thread_num
 
     # else if engine mode is Coroutine mode
     else:
         conf.engine_mode = 'coroutine'
+
+    # set concurrent num
+    if args.concurrent_num > 1000 or args.concurrent_num < 1:
+        warn_msg = "setting concurrent num {}. Maybe it's too much, continue? [y/N] (default y): ".format(args.concurrent_num)
+        colorprint.cyan(warn_msg, end='')
+        flag = input()
+        if flag.lower() in ('y', 'yes',''):
+            conf.concurrent_num = args.concurrent_num
+        else:
+            msg = '[-] User quit!'
+            colorprint.cyan(msg)
+            sys.exit()
+    conf.concurrent_num = args.concurrent_num
 
 
 def script_register(args):
@@ -139,7 +144,7 @@ def target_register(args):
             lists = gen_ip(args.target_range)
             if (len(lists)) > 100000:
                 warn_msg = "[*] Loading %d targets, Maybe it's too much, continue? [y/N]" % (len(lists))
-                colorprint.cyan(warn_msg)
+                colorprint.cyan(warn_msg, end='')
                 flag = input()
                 if flag in ('Y', 'y', 'yes', 'YES','Yes'):
                     pass
@@ -154,7 +159,8 @@ def target_register(args):
             # save to conf
             for target in lists:
                 conf.target.put(target)
-        except Exception as e:
+
+        except:   # Exception as e:
             # colorprint.red(e)
             err_msg = "Invalid input in [-iR], Example: -iR 192.168.1.1-192.168.1.100"
             colorprint.red(err_msg)
@@ -214,10 +220,6 @@ def target_register(args):
 
         elif args.censys_dork:
             handle_censys(query=args.censys_dork, limit=conf.limit, offset=conf.offset)
-
-        elif args.google_dork:
-            conf.google_proxy = args.google_proxy
-            handle_google(query=args.google_dork, limit = conf.limit, offset=conf.offset)
 
     # verify targets number
     if conf.target.qsize() == 0:
