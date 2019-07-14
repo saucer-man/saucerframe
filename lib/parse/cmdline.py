@@ -20,8 +20,8 @@ def cmdLineParser():
                         help='Multi-Threaded engine')
     engine.add_argument('-eG', dest="engine_gevent", default=False, action='store_true',
                         help='Gevent engine (single-threaded with asynchronous, default choice)')
-    engine.add_argument("-t","--thread",  dest="thread_num", type=int, default=30,
-                        help="num of threads, default 30")
+    engine.add_argument("-t","--thread",  dest="concurrent_num", type=int, default=100,
+                        help="num of concurrent, default 100")
     
     # script
     script = parser.add_argument_group("Script", "Choice script you want to use")
@@ -46,8 +46,6 @@ def cmdLineParser():
                      help='ZoomEye dork (e.g. "zabbix port:8080")') 
     api.add_argument('-aS', '--shodan', metavar='DORK', dest="shodan_dork", type=str, default='',
                      help='Shodan dork.') 
-    api.add_argument('-aG', '--google', metavar='DORK', dest="google_dork", type=str, default='',
-                     help='Google dork (e.g. "inurl:admin.php")') 
     api.add_argument('-aF', '--fofa', metavar='DORK', dest="fofa_dork", type=str, default='',
                      help='FoFa dork (e.g. "banner=users && protocol=ftp")')
     api.add_argument('-aC', '--censys', metavar='DORK', dest="censys_dork", type=str, default='',
@@ -57,11 +55,7 @@ def cmdLineParser():
     api.add_argument('--offset', metavar='OFFSET', dest="api_offset", type=int, default=0,
                      help="Search offset to begin getting results from (default:0)")
     api.add_argument('--search-type', metavar='TYPE', dest="search_type", action="store", default='host',
-                     help="[ZoomEye] search type used in ZoomEye API, web or host (default:host)") # 搜索类型
-    # proxy
-    proxy = parser.add_argument_group('PROXY')
-    proxy.add_argument('--gproxy', metavar='PROXY', dest="google_proxy", action="store", default=None,
-                     help="Use proxy (e.g. \"sock5 127.0.0.1 7070\" or \"http 127.0.0.1 1894\"")
+                     help="[ZoomEye] search type used in ZoomEye API, web or host (default:host)") # search type
 
     # output
     output = parser.add_argument_group("Output","Use those options to decide output")
