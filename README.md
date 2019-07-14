@@ -13,7 +13,7 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
     - 从文本种获取目标
     - 某一网段获取目标 e.g. 192.168.1.0/24
     - 某一ip段获取目标 192.168.1.0-192.168.2.33
-    - 支持多种api批量获取目标: [Google](https://cse.google.com/cse)、[Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)、[Censys](https://censys.io)
+    - 支持多种api批量获取目标: [Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)、[Censys](https://censys.io)
 
 ![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
 (利用Zoomeye批量扫描thinkphp5远程代码执行漏洞主机)
@@ -21,6 +21,8 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 # 更新历史
 <details>
 <summary>点击查看/关闭</summary>
+-2019-07-14
+增加进度条；去除并发数的限制；去除google api；优化了一些模块。
 
 - 2019-05-09
 增加logging模块，支持输出等级；增加censys api调用；IPY替换为内置库ipaddress、imp更新为importlib模块；规范大部分函数、变量命名；修改了程序逻辑。
@@ -70,8 +72,8 @@ Engine:
   -eT                   Multi-Threaded engine
   -eG                   Gevent engine (single-threaded with asynchronous,
                         default choice)
-  -t THREAD_NUM, --thread THREAD_NUM
-                        num of threads, default 30
+  -t CONCURRENT_NUM, --thread CONCURRENT_NUM
+                        num of concurrent, default 100
 
 Script:
   Choice script you want to use
@@ -94,8 +96,6 @@ API:
                         ZoomEye dork (e.g. "zabbix port:8080")
   -aS DORK, --shodan DORK
                         Shodan dork.
-  -aG DORK, --google DORK
-                        Google dork (e.g. "inurl:admin.php")
   -aF DORK, --fofa DORK
                         FoFa dork (e.g. "banner=users && protocol=ftp")
   -aC DORK, --censys DORK
@@ -105,10 +105,6 @@ API:
                         (default:0)
   --search-type TYPE    [ZoomEye] search type used in ZoomEye API, web or host
                         (default:host)
-
-PROXY:
-  --gproxy PROXY        Use proxy (e.g. "sock5 127.0.0.1 7070" or "http
-                        127.0.0.1 1894"
 
 Output:
   Use those options to decide output
