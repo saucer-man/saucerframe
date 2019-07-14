@@ -37,15 +37,6 @@ class ConfigFileParser:
     def shodan_apikey(self):
         return self._get_option('shodan', 'api_key')
 
-    def google_proxy(self):
-        return self._get_option('google', 'proxy')
-
-    def google_developer_key(self):
-        return self._get_option('google', 'developer_key')
-
-    def google_engine(self):
-        return self._get_option('google', 'search_engine')
-
     def censys_UID(self):
         return self._get_option('censys', 'UID')
 
