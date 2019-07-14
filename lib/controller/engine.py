@@ -11,6 +11,7 @@ import sys
 import threading
 import time
 import os
+import progressbar
 import traceback
 import importlib.util
 from lib.core.setting import ESSENTIAL_MODULE_METHODS
@@ -27,18 +28,27 @@ def initEngine():
     th.result = []
     th.thread_mode = True if conf.engine_mode == "multi_threaded" else False
     th.target = conf.target
+    th.target_num = conf.target.qsize()
     th.output_path = conf.output_path 
     th.scan_count = th.found_count = 0 
     th.is_continue = True 
     th.console_width = getTerminalSize()[0] - 2
+
     # set concurrent number
-    if th.thread_mode:
-        th.concurrent_count = th.concurrent_num = conf.thread_num
+    if th.target.qsize() < conf.concurrent_num:
+        th.concurrent_count = th.concurrent_num = th.target.qsize()
     else:
-        if th.target.qsize() < 150:
-            th.concurrent_count = th.concurrent_num = th.target.qsize()
-        else:
-            th.concurrent_count = th.concurrent_num = 150
+        th.concurrent_count = th.concurrent_num = conf.concurrent_num
+
+    # set process bar
+    widgets = [
+    '[', progressbar.SimpleProgress(), ']',
+    progressbar.Bar(),
+    '[', progressbar.Timer(), ']'
+    ]
+    global pbar 
+    pbar = progressbar.ProgressBar(redirect_stdout=True, widgets=widgets)
+    
     th.start_time = time.time()
 
 
@@ -80,6 +90,7 @@ def scan():
             logger.debug("testing:"+payload)
             sys.stdout.write(payload + " " * (th.console_width - len(payload)) + "\r")
             sys.stdout.flush()
+            # colorprint.white(payload, end = '\r', flush=True) --> useless because of slow
             if th.thread_mode: th.load_lock.release()
         else:
             if th.thread_mode: th.load_lock.release()
@@ -87,7 +98,7 @@ def scan():
         try:
             status = scan_module(payload)
             resultHandler(status, payload) 
-        except Exception as e:
+        except:
             th.err_msg = traceback.format_exc()
             th.is_continue = False
         # set scanned count + 1
@@ -103,6 +114,7 @@ def run():
         setThreadLock() 
         colorprint.green('[+] Set working way Multi-Threaded mode')
         colorprint.green('[+] Set the number of thread: %d' % th.concurrent_num) 
+        pbar.start(th.target_num)
         for i in range(th.concurrent_num): 
             t = threading.Thread(target=scan, name=str(i))
             t.setDaemon(True)
@@ -115,18 +127,25 @@ def run():
     else:
         colorprint.green('[+] Set working way Coroutine mode')
         colorprint.green('[+] Set the number of Coroutine: %d' % th.concurrent_num) 
+        pbar.start(th.target_num)
         gevent.joinall([gevent.spawn(scan) for i in range(0, th.concurrent_num)])
 
     # save result to output file
-
+    pbar.finish()
     output2file(th.result)
     printProgress()
     if 'err_msg' in th:
         colorprint.red(th.err_msg)
 
+# def process():
+#     hole = str(th.target_num)
+#     scanned = str(th.target_num - th.target.qsize())
+#     process = ' '*10+ '{}/{}'.format(scanned,hole)
+#     sys.stdout.write(process + "\r")
+#     sys.stdout.flush()
 
 def resultHandler(status, payload):
-
+    pbar.update(th.target_num-th.target.qsize())
     if not status or status is POC_RESULT_STATUS.FAIL:
         return
 
@@ -140,7 +159,7 @@ def resultHandler(status, payload):
     elif status is True or status is POC_RESULT_STATUS.SUCCESS:
         msg = '[+] ' + payload
         if th.thread_mode: th.output_screen_lock.acquire()
-        colorprint.white(msg)
+        colorprint.white(msg + " " * (th.console_width - len(msg)))
         if th.thread_mode: th.output_screen_lock.release()
         th.result.append(payload)
 
@@ -148,7 +167,7 @@ def resultHandler(status, payload):
     elif isinstance(status, list):
         if th.thread_mode: th.output_screen_lock.acquire()
         for msg in status:
-            colorprint.white(msg)
+            colorprint.white(msg + " " * (th.console_width - len(msg)))
             th.result.append(msg)
         if th.thread_mode: th.output_screen_lock.release()
         
@@ -195,6 +214,7 @@ def change_concurrent_count(num):
 
 
 def printProgress(): 
+    print('\n')
     msg = '%s found | %s remaining | %s scanned in %.2f seconds' % (
         th.found_count, th.target.qsize(), th.scan_count, time.time() - th.start_time)
     out = '\r' + ' ' * (th.console_width - len(msg)) + msg
