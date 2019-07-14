@@ -2,4 +2,4 @@ gevent
 requests
 shodan
 httplib2
-google-api-python-client
+progressbar2
