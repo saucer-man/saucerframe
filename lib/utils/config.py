@@ -42,6 +42,9 @@ class ConfigFileParser:
 
     def censys_SECRET(self):
         return self._get_option('censys', 'SECRET')
+    
+    def proxy(self):
+        return self._get_option('proxy','proxy')
 
 
 
