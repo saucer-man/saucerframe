@@ -12,19 +12,14 @@ import base64
 from lib.utils.config import ConfigFileParser
 from lib.core.common import colorprint
 from lib.core.data import paths, conf, logger
-try:
-    import requests
-except ImportError:
-    colorprint.red("[-] Can't import requests")
-    colorprint.cyan("[*] Try pip install requests")
-    sys.exit()
+from lib.core.Request import request
 
 
 def check(email, key): # verify email and key
     if email and key:
         auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email, key)
         try:
-            response = requests.get(auth_url)
+            response = request.get(auth_url)
             if response.status_code == 200:
                 return True
         except Exception as e:
@@ -62,7 +57,7 @@ def handle_fofa(query, limit, offset=0):
     
     request = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}"
     try:
-        response = requests.get(request).text
+        response = request.get(request).text
         resp = json.loads(response)
         if not resp["error"]:
             for item in resp.get('results')[offset:]:
