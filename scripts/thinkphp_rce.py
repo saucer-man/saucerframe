@@ -7,7 +7,7 @@ See the file 'LICENSE' for copying permission
 """
 
 import sys
-import requests
+from lib.core.Request import request
 # try :
 #     import tldextract
 # except:
@@ -41,7 +41,7 @@ def poc(domain_url):
             "X-Forwarded-For":"192.168.1.1"
         }
         for poc in poclist:
-            r = requests.get(domain_url + poc, headers=headers,verify=False, timeout =10,allow_redirects=False)
+            r = request.get(domain_url + poc, headers=headers,verify=False, timeout =10,allow_redirects=False)
             if "PHP Version" in r.text:
                 return domain_url + poc
         
