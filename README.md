@@ -14,6 +14,7 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
     - 某一网段获取目标 e.g. 192.168.1.0/24
     - 某一ip段获取目标 192.168.1.0-192.168.2.33
     - 支持多种api批量获取目标: [Shodan](https://www.shodan.io/)、[Zoomeye](https://www.zoomeye.org/)、[Fofa](https://fofa.so)、[Censys](https://censys.io)
+- 支持全局代理(socks5|socks4|http)
 
 ![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
 (利用Zoomeye批量扫描thinkphp5远程代码执行漏洞主机)
@@ -21,7 +22,11 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 # 更新历史
 <details>
 <summary>点击查看/关闭</summary>
--2019-07-14
+
+- 2019-07-25
+封装requests模块，新增全局代理选项，重写censys api模块。
+
+- 2019-07-14
 增加进度条；去除并发数的限制；去除google api；优化了一些模块。
 
 - 2019-05-09
@@ -61,13 +66,13 @@ python3 saucerframe.py -s script-name -iU target-url
 
 具体的参数说明：
 ```
-usage: python3 saucerframe.py -s thinkphp_rce -aS "thinkphp"
+usage: python3 saucerframe.py -s thinkphp_rce -aS "thinkphp" --proxy 127.0.0.1:1080
 
 optional arguments:
   -h, --help            show this help message and exit
 
 Engine:
-  Decide the working way of engine
+  Those options decide the working way of engine
 
   -eT                   Multi-Threaded engine
   -eG                   Gevent engine (single-threaded with asynchronous,
@@ -76,14 +81,14 @@ Engine:
                         num of concurrent, default 100
 
 Script:
-  Choice script you want to use
+  Those options decide which script to load
 
   -s SCRIPT_NAME, --script SCRIPT_NAME
                         load script by name (-s jboss-rce)
   --show                show available script names in ./script/ and exit
 
 Target:
-  At least one of these optionshas to be provided to define the target(s)
+  Those options can be used to load targets
 
   -iU TARGET            scan a single target (e.g. www.wooyun.org)
   -iF FILE              load targets from targetFile (e.g. wooyun_domain.txt)
@@ -92,6 +97,8 @@ Target:
   -iN IP/MASK           generate IP from IP/MASK. (e.g. 192.168.1.0/24)
 
 API:
+  Those options can be used to load targets with api
+
   -aZ DORK, --zoomeye DORK
                         ZoomEye dork (e.g. "zabbix port:8080")
   -aS DORK, --shodan DORK
@@ -107,11 +114,17 @@ API:
                         (default:host)
 
 Output:
-  Use those options to decide output
+  Those options can be used to set output path and filename
 
   -o OUTPUT_PATH, --output OUTPUT_PATH
                         output file name. default in ./output/
   -v LOGGING_LEVEL      logging level, default INFO,(eg -v 1) to output more
+
+Proxy:
+  Those options can be used to set proxy
+
+  --proxy PROXY         connect to target with proxy (e.g.
+                        'socks5://127.0.0.1:1080')
 ```
 
 # POC编写
