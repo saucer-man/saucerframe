@@ -13,7 +13,7 @@ description: weblogic 后台弱口令
 import sys
 import json
 import warnings
-import requests
+from lib.core.Request import request
 
 
 def poc(url):
@@ -30,7 +30,7 @@ def poc(url):
             "j_password":pwd
         }
         try:
-            req = requests.post(vulnurl, data=post_data, headers=headers, timeout=10, verify=False, allow_redirects=False)
+            req = request.post(vulnurl, data=post_data, headers=headers, timeout=10, verify=False, allow_redirects=False)
             if req.status_code == 302 and r"console" in req.text and r"LoginForm.jsp" not in req.text:
                 return vulnurl + json.dumps(post_data, indent=4)
             else:

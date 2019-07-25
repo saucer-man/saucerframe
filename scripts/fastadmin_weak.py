@@ -5,7 +5,7 @@ import sys
 import json
 import warnings
 import time
-import requests
+from lib.core.Request import request
 from urllib.parse import urlparse
 post_headers={
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
@@ -25,7 +25,7 @@ def fast_check_1(url,attach_path):
             "password":password
         }
         try:
-            req=requests.post(url=url_path,data=post_data,headers=post_headers,timeout=5, verify=False)
+            req=request.post(url=url_path,data=post_data,headers=post_headers,timeout=5, verify=False)
             if req.status_code==200 and "登录成功" in req.text:
                 attach_path.append(url_path+"---账号：admin"+"密码："+password)
             else:
@@ -43,7 +43,7 @@ def poc(url):
     #判断是否可以访问
     try:
         attack_url = url + '/admin/index/login.html'
-        r = requests.get(url=attack_url, headers=get_headers, timeout=4, verify=False)
+        r = request.get(url=attack_url, headers=get_headers, timeout=4, verify=False)
         if r.status_code != 200:
             return []
     except:

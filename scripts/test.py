@@ -12,10 +12,9 @@ See the file 'LICENSE' for copying permission
 
 import random
 import time
+from lib.core.Request import request
+import traceback
 
+def poc(url):
+    return request.get("http://ipconfig.me/ip").text
 
-def poc(str):
-    time.sleep(0.1)
-    if random.randint(1, 10000) > 9998:
-        return True
-    return False

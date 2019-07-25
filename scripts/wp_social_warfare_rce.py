@@ -13,7 +13,7 @@ vuln-analysis: https://mp.weixin.qq.com/s/jqdXGIG9SRKniI_2ZhKNJQ
 date:2019-05-11
 """
 
-import requests
+from lib.core.Request import request
 from plugin.random_ua import get_random_ua
 from urllib.parse import urlparse
 
@@ -35,7 +35,7 @@ def poc(url):
     try:
         print(vulnurl)
         headers= {"User-Agent":get_random_ua()}
-        r = requests.get(vulnurl, headers = headers, timeout=5, verify=False, allow_redirects=False)
+        r = request.get(vulnurl, headers = headers, timeout=5, verify=False, allow_redirects=False)
         print(r.status_code)
         print(r.headers)
         print(r.text)

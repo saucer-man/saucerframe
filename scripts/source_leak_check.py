@@ -11,7 +11,7 @@ See the file 'LICENSE' for copying permission
 import gevent
 from gevent.queue import Queue
 from lib.core.data import paths
-import requests
+from lib.core.Request import request
 from urllib.parse import urlparse
 from plugin.random_ua import get_random_ua
 
@@ -45,7 +45,7 @@ def bak_scan(url, payloads, result):
             flag = 0
             # 如果是备份文件则不需要下载，只需要head方法获取头部信息即可，否则文件较大会浪费大量的时间
             if 'zip' in payload or 'rar' in payload or 'gz' in payload or 'sql' in payload:
-                req = requests.head(vulnurl, headers=headers, timeout=5, allow_redirects=False, verify=False)
+                req = request.head(vulnurl, headers=headers, timeout=5, allow_redirects=False, verify=False)
                 # 404页面 'Content-Type': 'application/octet-stream',
                 # zip 'application/x-zip-compressed' 'application/zip'
                 # rar 'application/octet-stream'  'application/x-rar-compressed'
@@ -55,7 +55,7 @@ def bak_scan(url, payloads, result):
                         flag = 1
             # 当检验git和svn、hg时则需要验证返回内容，get方法
             else:
-                req = requests.get(vulnurl, headers=headers, timeout=5, verify=False, allow_redirects=False)
+                req = request.get(vulnurl, headers=headers, timeout=5, verify=False, allow_redirects=False)
                 if req.status_code == 200:
                     if 'svn' in payload:
                         if 'dir' in req.text and 'svn' in req.text:
