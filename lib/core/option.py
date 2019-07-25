@@ -10,16 +10,15 @@ import logging
 import os
 import sys
 import time
+import re
 import ipaddress
 from lib.core.data import paths, conf, logger
 from lib.core.common import colorprint, gen_ip
-from lib.api.zoomeye.zoomeye import handle_zoomeye
-from lib.api.fofa.fofa import handle_fofa
-from lib.api.shodan.shodan import handle_shodan
-from lib.api.censys.censys import handle_censys
+from lib.utils.config import ConfigFileParser
 
 def init_options(args):
     check_show(args)
+    proxy_regester(args)
     engine_register(args)
     script_register(args)
     target_register(args)
@@ -113,8 +112,6 @@ def script_register(args):
 
 
 def target_register(args):
-    msg = '[*] Initialize targets...'
-    colorprint.cyan(msg)
     
     # init target queue
     conf.target = queue.Queue()
@@ -204,6 +201,7 @@ def target_register(args):
         conf.offset = args.api_offset
 
         if args.zoomeye_dork:
+            from lib.api.zoomeye.zoomeye import handle_zoomeye
             # verify search_type for zoomeye
             if args.search_type not in ['web', 'host']:
                 msg = '[-] Invalid value in [--search-type], show usage with [-h]'
@@ -213,12 +211,15 @@ def target_register(args):
             handle_zoomeye(query=args.zoomeye_dork, limit=conf.limit, type=conf.search_type, offset = conf.offset)
 
         elif args.fofa_dork:
+            from lib.api.fofa.fofa import handle_fofa
             handle_fofa(query=args.fofa_dork, limit=conf.limit, offset=conf.offset)
         
         elif args.shodan_dork:
+            from lib.api.shodan.shodan import handle_shodan
             handle_shodan(query=args.shodan_dork, limit=conf.limit, offset=conf.offset)
 
         elif args.censys_dork:
+            from lib.api.censys.censys import handle_censys
             handle_censys(query=args.censys_dork, limit=conf.limit, offset=conf.offset)
 
     # verify targets number
@@ -239,6 +240,40 @@ def output_register(args):
     if args.logging_level >= 1:
         logger.setLevel(logging.DEBUG)
 
+def proxy_regester(args):
+    # if define proxy
+    if args.proxy:
+        proxy = args.proxy
+    else:
+        proxy = ConfigFileParser().proxy()
+    if proxy:
+        # check proxy format
+        try:
+            # check protocol
+            protocol = proxy.split("://")[0].lower()
+            if protocol not in ("socks4",'socks5','http'):
+                raise Exception("proxy protocol format error, please check your proxy (socks4|socks5|http)")
+
+            # check ip addr
+            ip =  proxy.split("://")[1].split(":")[0]
+            compile_ip=re.compile('^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
+            if not compile_ip.match(ip):
+                raise Exception("proxy ip format error, please check your proxy")
+
+            # check port
+            port = int(proxy.split("://")[1].split(":")[1])
+            if not 0 <= port <= 65535:
+                raise Exception("proxy port format error, please check your proxy")
+
+        except Exception as e:
+            colorprint.red(e)
+            sys.exit()
+
+        msg = "[+] setting proxy: {}://{}:{}".format(protocol, ip, port)
+        colorprint.green(msg)
+        conf.proxy = (protocol, ip, port)
+    else:
+        conf.proxy = None
 
 
 
