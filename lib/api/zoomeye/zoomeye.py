@@ -12,12 +12,7 @@ import sys
 from lib.core.data import paths, conf
 from lib.utils.config import ConfigFileParser
 from lib.core.common import colorprint
-try:
-    import requests
-except:
-    colorprint.red("[-] Can't import requests")
-    colorprint.cyan("[*] Try pip install requests")
-    sys.exit()
+from lib.core.Request import request
 
 class ZoomEye():
     def __init__(self, username=None, password=None):
@@ -60,7 +55,7 @@ class ZoomEye():
         'password': self.password
         }
         data_encoded = json.dumps(data)  # dumps 将 python 对象转换成 json 字符串
-        res = requests.post('https://api.zoomeye.org/user/login', data=data_encoded)
+        res = request.post('https://api.zoomeye.org/user/login', data=data_encoded)
         if res and res.status_code == 200 and 'access_token' in res.text:
             res_decoded = json.loads(res.text)
             self.token = res_decoded['access_token']
@@ -88,7 +83,7 @@ class ZoomEye():
         zoomeye_api = self.zoomeye_dork_api.format(resource)
         headers = {'Authorization': 'JWT %s' % self.token}
         params = {'query': dork, 'page': page + 1, 'facet': facet}
-        resp = requests.get(zoomeye_api, params=params, headers=headers)
+        resp = request.get(zoomeye_api, params=params, headers=headers)
         if resp and resp.status_code == 200 and 'matches' in resp.json():
             matches = resp.json().get('matches')
             # total = resp.json().get('total')  # all matches items num
@@ -118,7 +113,7 @@ class ZoomEye():
         data = None
         zoomeye_api = "https://api.zoomeye.org/resources-info"
         headers = {'Authorization': 'JWT %s' % self.token}
-        resp = requests.get(zoomeye_api, headers=headers)
+        resp = request.get(zoomeye_api, headers=headers)
         if resp and resp.status_code == 200 and 'plan' in resp.json():
             data = resp.json()
 
