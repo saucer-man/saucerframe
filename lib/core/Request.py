@@ -12,9 +12,9 @@ import urllib3
 import socks
 import socket
 from lib.core.data import conf
+from plugin.random_ua import get_random_ua
 
-
-class Requests():
+class Requests:
     
     def __init__(self):
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -30,25 +30,20 @@ class Requests():
                 socks.set_default_proxy(socks.HTTP, ip, port)
             socket.socket = socks.socksocket
 
-    def request(self, *args, **kwargs):
-        return requests.request(*args, **kwargs)
-        
-    def get(self, *args, **kwargs):
-        return requests.get(*args, **kwargs)
-    
-    def post(self, *args, **kwargs):
-        return requests.post(*args, **kwargs)
-    
-    def head(self, *args, **kwargs):
-        return requests.head(*args, **kwargs)
+    def __getattr__(self, method):
+        def inner(*args, **kwargs):
+            # setting random user agent
+            if "headers" not in kwargs.keys():
+                kwargs['headers'] = {'User-Agent': get_random_ua()}
+            elif 'User-Agent' not in kwargs['headers'].keys():
+                kwargs['headers']['User-Agent'] = get_random_ua()
 
-    def put(self, *args, **kwargs):
-        return requests.put(*args, **kwargs)
+            # setting exclude ssl
+            if "verify" not in kwargs.keys():
+                kwargs['verify'] = False
 
-    def patch(self, *args, **kwargs):
-        return requests.patch(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        return requests.delete(*args, **kwargs)
+            f = getattr(requests, method)
+            return f(*args, **kwargs)
+        return inner
 
 request = Requests()
