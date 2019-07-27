@@ -24,7 +24,7 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 <summary>点击查看/关闭</summary>
 
 - 2019-07-25
-封装requests模块，新增全局代理选项，重写censys api模块。
+封装requests模块，新增全局代理选项，默认随机UA，重写censys api模块。
 
 - 2019-07-14
 增加进度条；去除并发数的限制；去除google api；优化了一些模块。
