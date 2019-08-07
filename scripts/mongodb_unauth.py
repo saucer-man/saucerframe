@@ -21,7 +21,7 @@ def poc(url):
         url = "http://" + url
     o = urlparse(url)
     host = socket.gethostbyname(o.hostname)
-    port = o.port if o.port else 50050
+    port = o.port if o.port else 27017
     try:
         socket.setdefaulttimeout(5)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
