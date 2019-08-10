@@ -8,13 +8,10 @@ See the file 'LICENSE' for copying permission
 import sys
 import logging
 
-LOGGER = logging.getLogger("saucerframe")
-
+logger = logging.getLogger("saucerframe")
 LOGGER_HANDLER = logging.StreamHandler(sys.stdout)
-
 FORMATTER = logging.Formatter("\r[%(asctime)s][%(levelname)s] %(message)s", "%H:%M:%S")
-
 LOGGER_HANDLER.setFormatter(FORMATTER)
-LOGGER.addHandler(LOGGER_HANDLER)
+logger.addHandler(LOGGER_HANDLER)
 
-LOGGER.setLevel(logging.WARNING)
+
