@@ -17,7 +17,6 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 - 支持全局代理(socks5|socks4|http)
 
 ![](https://github.com/saucer-man/saucerframe/blob/master/doc/eg1.png)
-(利用Zoomeye批量扫描thinkphp5远程代码执行漏洞主机)
 
 # 更新历史
 <details>
