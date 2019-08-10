@@ -56,7 +56,7 @@ class ShodanBase:
 
         if 'matches' in result:
             for match in result.get('matches'):
-                conf.target.put(match.get('ip_str') + ':' + str(match.get('port')))
+                conf.target.add(match.get('ip_str') + ':' + str(match.get('port')))
         else:
             pass
 
