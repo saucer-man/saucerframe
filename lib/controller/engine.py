@@ -18,6 +18,7 @@ from lib.core.enums import POC_RESULT_STATUS
 from lib.utils.console import getTerminalSize
 from lib.core.log import logger
 
+
 def init_engine():
     # init control parameter
     th.result = []
@@ -83,8 +84,14 @@ def scan():
     change_concurrent_count(-1) # 
 
 
+def free_conf_memory():
+    for k in conf.keys():
+        conf[k] = None
+
+
 def run():
     init_engine()
+    free_conf_memory()
     if th.thread_mode:
         # set lock for multi_threaded mode   
         set_threadLock()
