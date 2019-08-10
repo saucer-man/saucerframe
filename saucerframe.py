@@ -13,9 +13,11 @@ from lib.core.common import colorprint, set_paths, banner
 from lib.core.data import cmdLineOptions
 from lib.core.option import init_options
 from lib.controller.engine import run
+from lib.controller.loader import load
 import os
 import time
-
+import sys
+import traceback
 
 def module_path():
     """
@@ -34,8 +36,14 @@ def check_environment():
         raise SystemExit
 
 
+def check_python_version():
+    if sys.version_info < (3, 4):
+        sys.exit("Python {}.{} or later is required.\n".format(3, 4))
+
+
 def main():
     try:
+        check_python_version()
         check_environment()
 
         # set paths of project
@@ -50,6 +58,9 @@ def main():
         # loader script,target,working way(threads? gevent?),output_file from cmdLineOptions
         # and send it to conf
         init_options(cmdLineOptions)
+
+        # load poc module and target --> tasks
+        load()
 
         # run!
         run()
