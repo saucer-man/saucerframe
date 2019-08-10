@@ -11,11 +11,12 @@ import json
 import base64
 from lib.utils.config import ConfigFileParser
 from lib.core.common import colorprint
-from lib.core.data import paths, conf, logger
+from lib.core.data import paths, conf
 from lib.core.Request import request
+from lib.core.log import logger
 
 
-def check(email, key): # verify email and key
+def check(email, key):  # verify email and key
     if email and key:
         auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email, key)
         try:
@@ -23,13 +24,14 @@ def check(email, key): # verify email and key
             if response.status_code == 200:
                 return True
         except Exception as e:
+            logger.debug(e)
             return False
     return False
 
 
 def handle_fofa(query, limit, offset=0):
     try:
-        msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
+        msg = '[+] Trying to login with credentials in config file: {}.'.format(paths.CONFIG_PATH)
         colorprint.green(msg)
         email = ConfigFileParser().fofa_email()
         key = ConfigFileParser().fofa_key()
@@ -55,13 +57,13 @@ def handle_fofa(query, limit, offset=0):
     # count how many result to search
     size = limit + offset  
     
-    request = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}"
+    url = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}"
     try:
-        response = request.get(request).text
+        response = request.get(url).text
         resp = json.loads(response)
         if not resp["error"]:
             for item in resp.get('results')[offset:]:
-                conf.target.put(item[0])
+                conf.target.add(item[0])
 
     except Exception as e:
         colorprint.red(e)
