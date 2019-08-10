@@ -144,8 +144,8 @@ def handle_zoomeye(query, limit, type, offset):
                     ip_str = ip_str + ':' + str(i.get('portinfo').get('port'))
                 result_count += 1
                 if result_count >= offset:
-                    conf.target.put(ip_str)
-                if conf.target.qsize() >= limit:
+                    conf.target.add(ip_str)
+                if len(conf.target) >= limit:
                     is_continue = False
                     break
             page += 1
