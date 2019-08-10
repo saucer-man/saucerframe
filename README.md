@@ -1,7 +1,7 @@
 # Saucerframe
 [![PyPI version](https://img.shields.io/badge/python-3-blue.svg)](https://www.python.org/)  [![License](https://img.shields.io/badge/license-GPLv2-red.svg)](https://raw.githubusercontent.com/sqlmapproject/sqlmap/master/LICENSE) 
 
-saucerframe是一个基于python3的开源批量POC检测框架，默认使用协程异步请求，支持多线程并发，支持多种指定目标方式，可用于批量POC检测，也可根据需要扩展功能。欢迎star和fork。
+saucerframe是一个基于python3的开源批量POC检测框架，默认使用协程异步请求，支持多线程并发，支持多种指定目标方式，可用于批量POC检测，也可根据需要扩展功能。**欢迎star和pr**
 
 **本项目用来交流学习，切勿用来做违法之事**
 
@@ -22,6 +22,9 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 # 更新历史
 <details>
 <summary>点击查看/关闭</summary>
+
+- 2019-08-10
+增加输出等级，增加模块加载方式，支持同时指定多个poc和多种target加载方式。
 
 - 2019-07-25
 封装requests模块，新增全局代理选项，默认随机UA，重写censys api模块。
@@ -53,78 +56,43 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 # 使用
 
 安装方法：
-```
+```shell
 git clone https://github.com/saucer-man/saucerframe.git 
 cd saucerframe
 pip install -r requirement.txt 
 ```
 
 使用方法：
-```
+```shell
+python3 saucerframe.py -h
+python3 saucerframe.py --show
 python3 saucerframe.py -s script-name -iU target-url 
 ```
 
 具体的参数说明：
 ```
-usage: python3 saucerframe.py -s thinkphp_rce -aS "thinkphp" --proxy 127.0.0.1:1080
+# 1. 指定poc脚本(必需,支持同时指定多个poc)
+-s redis_unauth,mongodb_unauth
 
-optional arguments:
-  -h, --help            show this help message and exit
+# 2. 指定目标(必需)
+-iU www.xxx.com  单个目标
+-iF target.txt  从文本中加载
+-iR 192.168.1.1-192.168.2.100  根据ip地址范围加载
+-iN 192.168.1.0/24  根据网段加载
+-aZ "redis"  ZoomEye api加载
+-aS "redis"  Shodan api加载
+-aC "redis"  Censys api加载
+-aF "redis"  Fofa api加载
 
-Engine:
-  Those options decide the working way of engine
-
-  -eT                   Multi-Threaded engine
-  -eG                   Gevent engine (single-threaded with asynchronous,
-                        default choice)
-  -t CONCURRENT_NUM, --thread CONCURRENT_NUM
-                        num of concurrent, default 100
-
-Script:
-  Those options decide which script to load
-
-  -s SCRIPT_NAME, --script SCRIPT_NAME
-                        load script by name (-s jboss-rce)
-  --show                show available script names in ./script/ and exit
-
-Target:
-  Those options can be used to load targets
-
-  -iU TARGET            scan a single target (e.g. www.wooyun.org)
-  -iF FILE              load targets from targetFile (e.g. wooyun_domain.txt)
-  -iR START-END         array from int(start) to int(end) (e.g.
-                        192.168.1.1-192.168.2.100)
-  -iN IP/MASK           generate IP from IP/MASK. (e.g. 192.168.1.0/24)
-
-API:
-  Those options can be used to load targets with api
-
-  -aZ DORK, --zoomeye DORK
-                        ZoomEye dork (e.g. "zabbix port:8080")
-  -aS DORK, --shodan DORK
-                        Shodan dork.
-  -aF DORK, --fofa DORK
-                        FoFa dork (e.g. "banner=users && protocol=ftp")
-  -aC DORK, --censys DORK
-                        censys dork
-  --limit NUM           Maximum searching results (default:50)
-  --offset OFFSET       Search offset to begin getting results from
-                        (default:0)
-  --search-type TYPE    [ZoomEye] search type used in ZoomEye API, web or host
-                        (default:host)
-
-Output:
-  Those options can be used to set output path and filename
-
-  -o OUTPUT_PATH, --output OUTPUT_PATH
-                        output file name. default in ./output/
-  -v LOGGING_LEVEL      logging level, default INFO,(eg -v 1) to output more
-
-Proxy:
-  Those options can be used to set proxy
-
-  --proxy PROXY         connect to target with proxy (e.g.
-                        'socks5://127.0.0.1:1080')
+# 3. 其他(可选)
+-h  查看帮助信息
+-t 300  并发数(默认100)
+--proxy socks5://127.0.0.1:1080  使用sock5代理
+-o result.txt  指定输出文件
+-v 4 指定终端输出详细级别(1-5, 默认为2)
+--show  查看所有poc
+-eT  并发采用多线程方式
+-eG  并发采用协程方式(默认)
 ```
 
 # POC编写
@@ -133,5 +101,4 @@ Proxy:
 
 # 感谢
 
-框架设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
-
+框架起初设计过程中借鉴了[POC-T](https://github.com/Xyntax/POC-T)和[sqlmap](https://github.com/sqlmapproject/sqlmap)等优秀开源项目的部分模式和代码，特此说明和感谢。
