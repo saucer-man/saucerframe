@@ -10,40 +10,34 @@ import gevent
 import sys
 import threading
 import time
-import os
 import progressbar
 import traceback
-import importlib.util
-from lib.core.setting import ESSENTIAL_MODULE_METHODS
-from lib.core.data import conf, th, logger
+from lib.core.data import conf, th
 from lib.core.common import colorprint
 from lib.core.enums import POC_RESULT_STATUS
 from lib.utils.console import getTerminalSize
+from lib.core.log import logger
 
-
-def initEngine():
-    # load module
-    load_module()
+def init_engine():
     # init control parameter
     th.result = []
     th.thread_mode = True if conf.engine_mode == "multi_threaded" else False
-    th.target = conf.target
-    th.target_num = conf.target.qsize()
+    th.tasks = conf.task_queue
+    th.tasks_num = conf.task_queue.qsize()
     th.output_path = conf.output_path 
     th.scan_count = th.found_count = 0 
     th.is_continue = True 
     th.console_width = getTerminalSize()[0] - 2
 
     # set concurrent number
-    if th.target.qsize() < conf.concurrent_num:
-        th.concurrent_count = th.concurrent_num = th.target.qsize()
+    if th.tasks.qsize() < conf.concurrent_num:
+        th.concurrent_count = th.concurrent_num = th.tasks.qsize()
     else:
         th.concurrent_count = th.concurrent_num = conf.concurrent_num
 
     # set process bar
     widgets = [
     '[', progressbar.SimpleProgress(), ']',
-    progressbar.Bar(),
     '[', progressbar.Timer(), ']'
     ]
     global pbar 
@@ -52,27 +46,7 @@ def initEngine():
     th.start_time = time.time()
 
 
-def load_module():
-    global scan_module
-    try:
-        module_spec = importlib.util.spec_from_file_location(ESSENTIAL_MODULE_METHODS, conf.module_path)
-        module = importlib.util.module_from_spec(module_spec)
-        module_spec.loader.exec_module(module)
-        # bug here how to change poc-->ESSENTIAL_MODULE_METHODS
-        scan_module = module.poc
-
-        msg = '[+] Load custom script: %s' % os.path.basename(conf.module_path)
-        colorprint.green(msg)
-
-    except Exception as e:
-        msg = "[-] Your current script [%s.py] caused this exception\n%s\n%s" \
-                   % (os.path.basename(conf.module_path), '[Error Msg]: ' + str(e),\
-                      'Maybe you can download this module from pip or easy_install')
-        colorprint.red(msg)
-        sys.exit(0)
-
-
-def setThreadLock(): 
+def set_threadLock():
     # set thread lock 
     th.output_screen_lock = threading.Lock()
     th.found_count_lock = threading.Lock()
@@ -85,19 +59,21 @@ def setThreadLock():
 def scan():
     while True:
         if th.thread_mode: th.load_lock.acquire()
-        if th.target.qsize() > 0 and th.is_continue: 
-            payload = str(th.target.get(timeout=1.0))
-            logger.debug("testing:"+payload)
+        if th.tasks.qsize() > 0 and th.is_continue:
+            task = th.tasks.get(timeout=1.0)
+            payload = str(task["target"])
+            module_obj = task["poc"]
             sys.stdout.write(payload + " " * (th.console_width - len(payload)) + "\r")
             sys.stdout.flush()
+            logger.info("testing: [{}] {}".format(module_obj.__name__, payload))
             # colorprint.white(payload, end = '\r', flush=True) --> useless because of slow
             if th.thread_mode: th.load_lock.release()
         else:
             if th.thread_mode: th.load_lock.release()
             break
         try:
-            status = scan_module(payload)
-            resultHandler(status, payload) 
+            status = module_obj.poc(payload)
+            result_handler(status, task)
         except:
             th.err_msg = traceback.format_exc()
             th.is_continue = False
@@ -108,13 +84,13 @@ def scan():
 
 
 def run():
-    initEngine()
+    init_engine()
     if th.thread_mode:
         # set lock for multi_threaded mode   
-        setThreadLock() 
+        set_threadLock()
         colorprint.green('[+] Set working way Multi-Threaded mode')
         colorprint.green('[+] Set the number of thread: %d' % th.concurrent_num) 
-        pbar.start(th.target_num)
+        pbar.start(th.tasks_num)
         for i in range(th.concurrent_num): 
             t = threading.Thread(target=scan, name=str(i))
             t.setDaemon(True)
@@ -127,54 +103,52 @@ def run():
     else:
         colorprint.green('[+] Set working way Coroutine mode')
         colorprint.green('[+] Set the number of Coroutine: %d' % th.concurrent_num) 
-        pbar.start(th.target_num)
+        pbar.start(th.tasks_num)
         gevent.joinall([gevent.spawn(scan) for i in range(0, th.concurrent_num)])
 
     # save result to output file
     pbar.finish()
     output2file(th.result)
-    printProgress()
+    print_progress()
     if 'err_msg' in th:
         colorprint.red(th.err_msg)
 
-# def process():
-#     hole = str(th.target_num)
-#     scanned = str(th.target_num - th.target.qsize())
-#     process = ' '*10+ '{}/{}'.format(scanned,hole)
-#     sys.stdout.write(process + "\r")
-#     sys.stdout.flush()
 
-def resultHandler(status, payload):
-    pbar.update(th.target_num-th.target.qsize())
+def result_handler(status, task):
+    pbar.update(th.tasks_num-th.tasks.qsize())
     if not status or status is POC_RESULT_STATUS.FAIL:
+        logger.debug('not vuln: [{}] {}'.format(task['poc'].__name__, task["target"]))
         return
 
     # try again 
     elif status is POC_RESULT_STATUS.RETRAY:
-        change_scan_count(-1) 
-        th.target.put(payload) 
+        logger.debug('try again: [{}] {}'.format(task['poc'].__name__, task["target"]))
+        change_scan_count(-1)
+        th.tasks.put(task)
         return
 
     # vulnerable
     elif status is True or status is POC_RESULT_STATUS.SUCCESS:
-        msg = '[+] ' + payload
+        logger.debug('vuln: [{}] {}'.format(task['poc'].__name__, task["target"]))
+        msg = '[{}] {}'.format(task['poc'].__name__, task["target"])
         if th.thread_mode: th.output_screen_lock.acquire()
         colorprint.white(msg + " " * (th.console_width - len(msg)))
         if th.thread_mode: th.output_screen_lock.release()
-        th.result.append(payload)
+        th.result.append(msg)
 
     # If there is a lot of information, Line feed display
     elif isinstance(status, list):
         if th.thread_mode: th.output_screen_lock.acquire()
-        for msg in status:
+        for _msg in status:
+            msg = '[{}] {}'.format(task['poc'].__name__, _msg)
             colorprint.white(msg + " " * (th.console_width - len(msg)))
             th.result.append(msg)
         if th.thread_mode: th.output_screen_lock.release()
         
     else:
-        msg = str(status)
+        msg = '[{}] {}'.format(task['poc'].__name__, str(status))
         if th.thread_mode: th.output_screen_lock.acquire()
-        colorprint.white(msg)
+        colorprint.white(msg + " " * (th.console_width - len(msg)))
         if th.thread_mode: th.output_screen_lock.release()
         th.result.append(msg)
 
@@ -213,9 +187,9 @@ def change_concurrent_count(num):
     if th.thread_mode: th.concurrent_count_lock.release()
 
 
-def printProgress(): 
+def print_progress():
     print('\n')
-    msg = '%s found | %s remaining | %s scanned in %.2f seconds' % (
-        th.found_count, th.target.qsize(), th.scan_count, time.time() - th.start_time)
+    msg = '%s found | %s remaining | %s tasks done in %.2f seconds' % (
+        th.found_count, th.tasks.qsize(), th.scan_count, time.time() - th.start_time)
     out = '\r' + ' ' * (th.console_width - len(msg)) + msg
     colorprint.blue(out)
