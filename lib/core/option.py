@@ -5,19 +5,23 @@
 Copyright (c) saucerman (https://saucer-man.com)
 See the file 'LICENSE' for copying permission
 """
-import queue
-import logging
+
+
 import os
 import sys
 import time
 import re
+import logging
 import ipaddress
-from lib.core.data import paths, conf, logger
+from lib.core.data import paths, conf
 from lib.core.common import colorprint, gen_ip
 from lib.utils.config import ConfigFileParser
+from lib.core.log import logger
+
 
 def init_options(args):
     check_show(args)
+    logger_lever_set(args)
     proxy_regester(args)
     engine_register(args)
     script_register(args)
@@ -33,8 +37,8 @@ def check_show(args):
         order = 1
         for module in module_name_list:
             # only show useful scripts
-            if module not in ['__init__.py','test.py'] and os.path.splitext(module)[1] == '.py':
-                colorprint.green(str(order)+ '. ' +module)
+            if module not in ['__init__.py', 'test.py'] and os.path.splitext(module)[1] == '.py':
+                colorprint.green(str(order) + '. ' + module)
                 order += 1
         msg = '\n' + ' ' * 25 + 'Total: %d' % (order-1)
         colorprint.green(msg)
@@ -72,90 +76,91 @@ def engine_register(args):
 
 def script_register(args):
 
+    conf.module_path = []
     # handle no scripts
     if not args.script_name:
         msg = '[-] Use -s to load script. Example: [-s spider] or [-s ./script/spider.py]'
         colorprint.red(msg)
         sys.exit()
-
-    # handle input: "-s ./script/spider.py"
-    if os.path.split(args.script_name)[0]:
-        if os.path.exists(args.script_name):
-            if os.path.isfile(args.script_name):
-                if args.script_name.endswith('.py'):
-                    conf.module_path = os.path.abspath(args.script_name)
+    for script_name in args.script_name.split(","):
+        # handle input: "-s ./script/spider.py"
+        if os.path.split(script_name)[0]:
+            if os.path.exists(script_name):
+                if os.path.isfile(script_name):
+                    if script_name.endswith('.py'):
+                        conf.module_path.append(os.path.abspath(script_name))
+                    else:
+                        msg = '[-] [{}] not a Python file. Example: [-s spider] or [-s ./scripts/spider.py]' .format(script_name)
+                        colorprint.red('[-] ' + msg)
+                        sys.exit()
                 else:
-                    msg = '[-] [%s] not a Python file. Example: [-s spider] or [-s ./scripts/spider.py]' % args.script_name
-                    colorprint.red('[-] ' + msg)
+                    msg = '[-] [{}] not a file. Example: [-s spider] or [-s ./scripts/spider.py]'.format(script_name)
+                    colorprint.red(msg)
                     sys.exit()
             else:
-                msg = '[-] [%s] not a file. Example: [-s spider] or [-s ./scripts/spider.py]' % args.script_name
+                msg = '[-] [{}] not found. Example: [-s spider] or [-s ./scripts/spider.py]'.format(script_name)
                 colorprint.red(msg)
                 sys.exit()
-        else:
-            msg = '[-] [%s] not found. Example: [-s spider] or [-s ./scripts/spider.py]' % args.script_name
-            colorprint.red(msg)
-            sys.exit()
 
-    # handle input: "-s spider"  "-s spider.py"
-    else:
-        if not args.script_name.endswith('.py'):
-            args.script_name += '.py'
-        _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, args.script_name))
-        if os.path.isfile(_path):
-            conf.module_path = os.path.abspath(_path)
+        # handle input: "-s spider"  "-s spider.py"
         else:
-            msg = '[-] Script [%s] not exist. Use [--show] to view all available script in ./scripts/' % args.script_name
-            colorprint.red(msg)
-            sys.exit()
-    # conf.module_path: D:\software\tools\saucerframe\scripts\test.py
+            if not script_name.endswith('.py'):
+                script_name += '.py'
+            _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, script_name))
+            if os.path.isfile(_path):
+                conf.module_path.append(os.path.abspath(_path))
+            else:
+                msg = '[-] Script [{}] not exist. Use [--show] to view all available script in ./scripts/'.format(script_name)
+                colorprint.red(msg)
+                sys.exit()
+    # e.g. conf.module_path: ['D:\\python\\saucerframe\\scripts\\redis_unauth.py', 'D:\\python\\saucerframe\\scripts\\mongodb_unauth.py']
 
 
 def target_register(args):
     
     # init target queue
-    conf.target = queue.Queue()
+    conf.target = set()
 
     # single target to queue
     if args.target_single:
-        msg = '[+] Load target : %s' % args.target_single
+        msg = '[+] Load target : {}'.format(args.target_single)
         colorprint.green(msg)
-        conf.target.put(args.target_single)
+        conf.target.add(args.target_single)
 
     # file target to queue
-    elif args.target_file:
+    if args.target_file:
         if not os.path.isfile(args.target_file):
-            msg = '[-] TargetFile not found: %s' % args.target_file
+            msg = '[-] TargetFile not found: {}'.format(args.target_file)
             colorprint.red(msg)
             sys.exit()
-        msg = '[+] Load targets from : %s' % args.target_file
+        msg = '[+] Load targets from : {}'.format(args.target_file)
         colorprint.green(msg)
         with open(args.target_file, 'r', encoding='utf8') as f:
             targets = f.readlines()
             for target in targets:
-                conf.target.put(target.strip('\n'))
+                conf.target.add(target.strip('\n'))
 
     # range of ip target to queue .e.g. 192.168.1.1-192.168.1.100
-    elif args.target_range:
+    if args.target_range:
         try:
             lists = gen_ip(args.target_range)
             if (len(lists)) > 100000:
-                warn_msg = "[*] Loading %d targets, Maybe it's too much, continue? [y/N]" % (len(lists))
+                warn_msg = "[*] Loading {} targets, Maybe it's too much, continue? [y/N]".format((len(lists)))
                 colorprint.cyan(warn_msg, end='')
                 flag = input()
-                if flag in ('Y', 'y', 'yes', 'YES','Yes'):
+                if flag in ('Y', 'y', 'yes', 'YES', 'Yes'):
                     pass
                 else:
                     msg = '[-] User quit!'
                     colorprint.cyan(msg)
                     sys.exit()
-            
-            msg = '[+] Load targets from : %s' % args.target_range
+
+            msg = '[+] Load targets from : {}'.format(args.target_range)
             colorprint.green(msg)
 
             # save to conf
             for target in lists:
-                conf.target.put(target)
+                conf.target.add(target)
 
         except:   # Exception as e:
             # colorprint.red(e)
@@ -164,72 +169,81 @@ def target_register(args):
             sys.exit()
     
     # ip/mask e.g. 192.168.1.2/24
-    elif args.target_network:
+    if args.target_network:
         try:
             ip_range = ipaddress.ip_network(args.target_network, strict=False)
             for ip in ip_range.hosts():
-                conf.target.put(ip)
+                conf.target.add(ip)
 
-        except Exception as e:
+        except:  #  Exception as e:
             # colorprint.red(e)
             msg = "[-] Invalid input in [-iN], Example: -iN 192.168.1.0/24"
             colorprint.red(msg)
             sys.exit()
 
-        msg = '[+] Load targets from : %s' % args.target_network
+        msg = '[+] Load targets from : {}'.format(args.target_network)
         colorprint.green(msg)
 
-    else:
-        # set search limit of api
-        if args.api_limit <= 0:
-            err_msg = 'Invalid input in [-limit] (can not be negative number)'
-            colorprint.red(err_msg)
+    # set search limit of api
+    if args.api_limit <= 0:
+        err_msg = 'Invalid input in [-limit] (can not be negative number)'
+        colorprint.red(err_msg)
+        sys.exit()
+    if args.api_limit > 10000:
+        warn_msg = "Loading {} targets, Maybe it's too much, continue? [y/N]".format(args.api_limit)
+        colorprint.cyan(warn_msg)
+        flag = input()
+        if flag in ('Y', 'y', 'yes', 'YES', 'Yes'):
+            pass
+        else:
+            msg = 'User quit!'
+            colorprint.cyan(msg)
             sys.exit()
-        elif args.api_limit > 10000:
-            warn_msg = "Loading {} targets, Maybe it's too much, continue? [y/N]".format(args.api_limit)
-            colorprint.cyan(warn_msg)
-            flag = input()
-            if flag in ('Y', 'y', 'yes', 'YES','Yes'):
-                pass
-            else:
-                msg = 'User quit!'
-                colorprint.cyan(msg)
-                sys.exit()
-        conf.limit = args.api_limit
-        
-        # set search offset of api
-        conf.offset = args.api_offset
+    conf.limit = args.api_limit
 
-        if args.zoomeye_dork:
-            from lib.api.zoomeye.zoomeye import handle_zoomeye
-            # verify search_type for zoomeye
-            if args.search_type not in ['web', 'host']:
-                msg = '[-] Invalid value in [--search-type], show usage with [-h]'
-                colorprint.red(msg)
-                sys.exit()
-            conf.search_type = args.search_type
-            handle_zoomeye(query=args.zoomeye_dork, limit=conf.limit, type=conf.search_type, offset = conf.offset)
+    # set search offset of api
+    if args.api_offset < 0:
+        warn_msg = "Wrong offset setting, would you like to set it to 0? [y/N]".format(args.api_limit)
+        colorprint.cyan(warn_msg)
+        flag = input()
+        if flag in ('Y', 'y', 'yes', 'YES', 'Yes'):
+            args.api_offset = 0
+        else:
+            msg = 'User quit!'
+            colorprint.cyan(msg)
+            sys.exit()
+    conf.offset = args.api_offset
 
-        elif args.fofa_dork:
-            from lib.api.fofa.fofa import handle_fofa
-            handle_fofa(query=args.fofa_dork, limit=conf.limit, offset=conf.offset)
-        
-        elif args.shodan_dork:
-            from lib.api.shodan.shodan import handle_shodan
-            handle_shodan(query=args.shodan_dork, limit=conf.limit, offset=conf.offset)
+    if args.zoomeye_dork:
+        from lib.api.zoomeye.zoomeye import handle_zoomeye
+        # verify search_type for zoomeye
+        if args.search_type not in ['web', 'host']:
+            msg = '[-] Invalid value in [--search-type], show usage with [-h]'
+            colorprint.red(msg)
+            sys.exit()
+        conf.search_type = args.search_type
+        handle_zoomeye(query=args.zoomeye_dork, limit=conf.limit, type=conf.search_type, offset=conf.offset)
 
-        elif args.censys_dork:
-            from lib.api.censys.censys import handle_censys
-            handle_censys(query=args.censys_dork, limit=conf.limit, offset=conf.offset)
+    if args.fofa_dork:
+        from lib.api.fofa.fofa import handle_fofa
+        handle_fofa(query=args.fofa_dork, limit=conf.limit, offset=conf.offset)
+
+    if args.shodan_dork:
+        from lib.api.shodan.shodan import handle_shodan
+        handle_shodan(query=args.shodan_dork, limit=conf.limit, offset=conf.offset)
+
+    if args.censys_dork:
+        from lib.api.censys.censys import handle_censys
+        handle_censys(query=args.censys_dork, limit=conf.limit, offset=conf.offset)
 
     # verify targets number
-    if conf.target.qsize() == 0:
+    if len(conf.target) == 0:
         err_msg = 'No targets found\nPlease load targets with [-iU|-iF|-iR|-iN] or use API with [-aZ|-aS|-aG|-aF]'
         colorprint.red(err_msg)
         sys.exit()
 
-def output_register(args):
 
+def output_register(args):
     # if not define output, named it by time
     if not args.output_path:
         filename = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.txt'
@@ -237,8 +251,7 @@ def output_register(args):
     conf.output_path = os.path.join(paths.OUTPUT_PATH, filename)
     msg = '[+] Output: %s' % conf.output_path
     colorprint.green(msg)
-    if args.logging_level >= 1:
-        logger.setLevel(logging.DEBUG)
+
 
 def proxy_regester(args):
     # if define proxy
@@ -255,7 +268,7 @@ def proxy_regester(args):
                 raise Exception("proxy protocol format error, please check your proxy (socks4|socks5|http)")
 
             # check ip addr
-            ip =  proxy.split("://")[1].split(":")[0]
+            ip = proxy.split("://")[1].split(":")[0]
             compile_ip=re.compile('^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
             if not compile_ip.match(ip):
                 raise Exception("proxy ip format error, please check your proxy")
@@ -276,4 +289,18 @@ def proxy_regester(args):
         conf.proxy = None
 
 
-
+def logger_lever_set(args):
+    if args.logging_level == 1:
+        logger.setLevel(logging.ERROR)
+    elif args.logging_level == 2:
+        logger.setLevel(logging.WARNING)
+    elif args.logging_level == 3:
+        logger.setLevel(logging.INFO)
+    elif args.logging_level == 4:
+        logger.setLevel(logging.DEBUG)
+    elif args.logging_level == 5:
+        logger.setLevel(logging.NOTSET)
+    else:
+        msg = 'something error when setting logger lever, please check it!'
+        colorprint.red('[-] ' + msg)
+        sys.exit()
