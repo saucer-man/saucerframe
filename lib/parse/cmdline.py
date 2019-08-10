@@ -60,13 +60,12 @@ def cmdLineParser():
     output = parser.add_argument_group("Output","Those options can be used to set output path and filename")
     output.add_argument("-o","--output", dest="output_path", type=str, default="",
                         help="output file name. default in ./output/")
-    output.add_argument("-v", dest="logging_level", type=int, default=0,
-                        help="logging level, default INFO,(eg -v 1) to output more")
+    output.add_argument("-v", "--verbose", dest="logging_level", type=int, default=2,
+                        help="logging level, default WARNING,(eg -v 3) to output more")
     
     # proxy
     proxy = parser.add_argument_group("Proxy","Those options can be used to set proxy")
     proxy.add_argument("--proxy", metavar='PROXY', dest="proxy", type=str, default='', help="connect to target with proxy (e.g. 'socks5://127.0.0.1:1080')")
-
 
     args = parser.parse_args()
     return args
