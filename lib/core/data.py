@@ -7,7 +7,6 @@ See the file 'LICENSE' for copying permission
 """
 
 from lib.core.datatype import AttribDict
-from lib.core.log import LOGGER
 # saucerframe paths
 paths = AttribDict()
 
@@ -20,6 +19,3 @@ conf = AttribDict()
 
 # object to control engine 
 th = AttribDict()
-
-# logger
-logger = LOGGER
