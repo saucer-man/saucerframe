@@ -20,8 +20,6 @@ API_URL = "https://censys.io/api/v1"
 
 def can_auto_login():
     if UID and SECRET:
-        msg = '[+] Trying to login with credentials in config file: %s.' % paths.CONFIG_PATH
-        colorprint.green(msg)
         try:
             res = request.get(API_URL + "/data", auth=(UID, SECRET), timeout = 10)
             if res.status_code != 200:
@@ -54,7 +52,7 @@ def get_ip(query, page):
 
         # add result in some specific form
         for result in results["results"]:
-            conf.target.put(result["ip"])
+            conf.target.add(result["ip"])
 
     except Exception as e:
         colorprint.red(e)
@@ -65,6 +63,8 @@ def handle_censys(query, limit, offset):
     global SECRET
     UID = ConfigFileParser().censys_UID()
     SECRET = ConfigFileParser().censys_SECRET()
+    msg = '[+] Trying to login with credentials in config file: {}.' .format(paths.CONFIG_PATH)
+    colorprint.green(msg)
     if not can_auto_login():
         err_msg = '[-] Automatic authorization failed.\n[*] Please input your censys API Key (https://censys.io/account/api).'
         colorprint.cyan(err_msg)
