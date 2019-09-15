@@ -247,7 +247,8 @@ def output_register(args):
     # if not define output, named it by time
     if not args.output_path:
         filename = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.txt'
-
+    else:
+        filename = args.output_path
     conf.output_path = os.path.join(paths.OUTPUT_PATH, filename)
     msg = '[+] Output: %s' % conf.output_path
     colorprint.green(msg)
