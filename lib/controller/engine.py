@@ -162,8 +162,8 @@ def result_handler(status, task):
     # get found number of payload +1
     change_found_count(1) 
 
-    # if result list is too large, save it to file and empty list
-    if len(th.result) > 5000:
+    # save result to file and empty list
+    if th.result:
         output2file(th.result)
         th.result = []
 
