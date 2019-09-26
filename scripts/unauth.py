@@ -5,8 +5,8 @@
 
 import threading
 import socket
-import traceback
 from lib.core.Request import request
+from plugin.target_parse import get_standard_url, url2ip
 import re
 import binascii
 import urllib3
@@ -192,7 +192,7 @@ def couchdb(host, result, ports=[5984]):
             pass
 
 
-def elasticsearch(host, result, ports = [9200]):
+def elasticsearch(host, result, ports=[9200]):
     for port in ports:
         try:
             r = request.get(f"http://{host}:{port}", timeout=5, allow_redirects=False, verify=False)
@@ -236,22 +236,25 @@ def docker(host, result, ports=[2375]):
 
 
 def poc(host, ports=[]):
+    host = get_standard_url(host)
+    hosts = url2ip(host)
     result = []
     threads = []
-    if ports:
-        args = (host, result, ports)
-    else:
-        args = (host, result,)
-    poc_list = ['redis', 'mongo', 'genkins', 'memcached', 'jboss', 'zookeeper', 'rsync', 'couchdb', \
-                'elasticsearch', 'hadoop', 'jupyter', 'docker']
-    for p in poc_list:
-        threads.append(threading.Thread(target=globals()[p], args=args))
+    for host in hosts:
+        if ports:
+            args = (host, result, ports)
+        else:
+            args = (host, result,)
+        poc_list = ['redis', 'mongo', 'genkins', 'memcached', 'jboss', 'zookeeper', 'rsync', 'couchdb', \
+                    'elasticsearch', 'hadoop', 'jupyter', 'docker']
+        for p in poc_list:
+            threads.append(threading.Thread(target=globals()[p], args=args))
 
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-    return result
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+        return result
 
 
 
