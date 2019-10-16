@@ -9,6 +9,7 @@ from lib.core.Request import request
 from plugin.target_parse import get_standard_url, url2ip
 import re
 import binascii
+from ftplib import FTP
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -233,7 +234,18 @@ def docker(host, result, ports=[2375]):
                 result.append(f"docker: {host}:{port}")
         except:
             pass
-
+            
+            
+def ftp(host, result, ports=[21]):
+    for port in ports:
+        try:
+            ftp = FTP()
+            ftp.connect(host, port)
+            ftp.login('anonymous', 'anonymous')
+            result.append(f"ftp: {host}:{port}")
+            ftp.quit()
+        except:
+            pass
 
 def poc(host, ports=[]):
     host = get_standard_url(host)
@@ -246,7 +258,7 @@ def poc(host, ports=[]):
         else:
             args = (host, result,)
         poc_list = ['redis', 'mongo', 'genkins', 'memcached', 'jboss', 'zookeeper', 'rsync', 'couchdb', \
-                    'elasticsearch', 'hadoop', 'jupyter', 'docker']
+                    'elasticsearch', 'hadoop', 'jupyter', 'docker', 'ftp']
         for p in poc_list:
             threads.append(threading.Thread(target=globals()[p], args=args))
 
