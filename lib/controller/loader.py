@@ -12,6 +12,7 @@ import importlib.util
 import os
 import sys
 import queue
+import traceback
 from lib.core.common import colorprint
 
 
@@ -40,9 +41,7 @@ def load_poc():
             colorprint.green(msg)
             conf.poc_module.append(module)
 
-        except Exception as e:
-            msg = "[-] Your current script [{}.py] caused this exception\n{}\n{}" \
-                       .format((os.path.basename(conf.module_path), '[Error Msg]: ' + str(e), \
-                        'Maybe you can download this module from pip or easy_install'))
+        except:
+            msg = "[-] Your current script [{}] caused this exception\n[-] Error Msg:\n{}".format(os.path.basename(module_path),traceback.format_exc())
             colorprint.red(msg)
             sys.exit(0)
