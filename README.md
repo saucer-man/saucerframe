@@ -22,6 +22,9 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 <details>
 <summary>点击查看/关闭</summary>
 
+- 2019-11-25
+重写进度条。
+
 - 2019-08-10
 增加输出等级，增加模块加载方式，支持同时指定多个poc和多种target加载方式。
 

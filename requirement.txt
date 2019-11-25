@@ -2,5 +2,4 @@ gevent
 requests
 shodan
 httplib2
-progressbar2
 PySocks

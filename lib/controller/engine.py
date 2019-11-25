@@ -10,7 +10,6 @@ import gevent
 import sys
 import threading
 import time
-import progressbar
 import traceback
 from lib.core.data import conf, th
 from lib.core.common import colorprint
@@ -35,14 +34,6 @@ def init_engine():
         th.concurrent_count = th.concurrent_num = th.tasks.qsize()
     else:
         th.concurrent_count = th.concurrent_num = conf.concurrent_num
-
-    # set process bar
-    widgets = [
-    '[', progressbar.SimpleProgress(), ']',
-    '[', progressbar.Timer(), ']'
-    ]
-    global pbar 
-    pbar = progressbar.ProgressBar(redirect_stdout=True, widgets=widgets)
     
     th.start_time = time.time()
 
@@ -64,7 +55,7 @@ def scan():
             task = th.tasks.get(timeout=1.0)
             payload = str(task["target"])
             module_obj = task["poc"]
-            sys.stdout.write(payload + " " * (th.console_width - len(payload)) + "\r")
+            sys.stdout.write("(" + str(th.tasks_num-th.tasks.qsize()) + "/" + str(th.tasks_num) + ")\r")
             sys.stdout.flush()
             logger.info("testing: [{}] {}".format(module_obj.__name__, payload))
             # colorprint.white(payload, end = '\r', flush=True) --> useless because of slow
@@ -97,7 +88,7 @@ def run():
         set_threadLock()
         colorprint.green('[+] Set working way Multi-Threaded mode')
         colorprint.green('[+] Set the number of thread: %d' % th.concurrent_num) 
-        pbar.start(th.tasks_num)
+
         for i in range(th.concurrent_num): 
             t = threading.Thread(target=scan, name=str(i))
             t.setDaemon(True)
@@ -109,12 +100,10 @@ def run():
     # Coroutine mode
     else:
         colorprint.green('[+] Set working way Coroutine mode')
-        colorprint.green('[+] Set the number of Coroutine: %d' % th.concurrent_num) 
-        pbar.start(th.tasks_num)
+        colorprint.green('[+] Set the number of Coroutine: %d' % th.concurrent_num)
         gevent.joinall([gevent.spawn(scan) for i in range(0, th.concurrent_num)])
 
     # save result to output file
-    pbar.finish()
     output2file(th.result)
     print_progress()
     if 'err_msg' in th:
@@ -122,7 +111,6 @@ def run():
 
 
 def result_handler(status, task):
-    pbar.update(th.tasks_num-th.tasks.qsize())
     if not status or status is POC_RESULT_STATUS.FAIL:
         logger.debug('not vuln: [{}] {}'.format(task['poc'].__name__, task["target"]))
         return
