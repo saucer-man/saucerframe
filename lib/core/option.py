@@ -82,6 +82,15 @@ def script_register(args):
         msg = '[-] Use -s to load script. Example: [-s spider] or [-s ./script/spider.py]'
         colorprint.red(msg)
         sys.exit()
+    if args.script_name == "all":
+        module_name_list = os.listdir(paths.SCRIPT_PATH)
+        for script_name in module_name_list:
+            # only useful scripts
+            if script_name not in ['__init__.py', 'test.py'] and os.path.splitext(script_name)[1] == '.py':
+                _path = os.path.abspath(os.path.join(paths.SCRIPT_PATH, script_name))
+                conf.module_path.append(_path)
+        return
+
     for script_name in args.script_name.split(","):
         # handle input: "-s ./script/spider.py"
         if os.path.split(script_name)[0]:

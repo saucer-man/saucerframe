@@ -21,6 +21,8 @@ saucerframe是一个基于python3的开源批量POC检测框架，默认使用�
 # 更新历史
 <details>
 <summary>点击查看/关闭</summary>
+- 2020-10-14
+支持一次运行全部poc脚本
 
 - 2019-11-25
 重写进度条。
@@ -74,7 +76,8 @@ python3 saucerframe.py -s script-name -iU target-url
 具体的参数说明：
 ```
 # 1. 指定poc脚本(必需,支持同时指定多个poc)
--s redis_unauth,mongodb_unauth
+-s all 指定全部脚本
+-s redis_unauth,mongodb_unauth  指定单个/多个脚本
 
 # 2. 指定目标(必需)
 -iU www.xxx.com  单个目标
