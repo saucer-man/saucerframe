@@ -4,3 +4,4 @@ output/
 test.txt
 *.conf
 test.conf
+.idea/
