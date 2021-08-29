@@ -5,6 +5,9 @@
 import requests
 from plugin.target_parse import get_standard_url
 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 def poc(url):
     if not url.startswith("http"):
