@@ -25,7 +25,7 @@ def poc(url):
     url = o.scheme + "://" + o.netloc + payload
     try:
         req = request.get(url, headers=headers, timeout=5, allow_redirects=False, verify=False)
-        if req.status_code == 200:
+        if req.status_code == 200 and "database" in req.text.lower():
             return url
         else:
             return False
