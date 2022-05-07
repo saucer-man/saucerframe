@@ -57,13 +57,19 @@ def handle_fofa(query, limit, offset=0):
     # count how many result to search
     size = limit + offset  
     
-    url = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}"
+    url = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}&fields=host,ip,protocol,port"
     try:
         response = request.get(url).text
         resp = json.loads(response)
         if not resp["error"]:
             for item in resp.get('results')[offset:]:
-                conf.target.add(item[0])
+                host = item[0]
+                protocol = item[2]
+                # 下面根据host,ip, protocal, port来组装，一般用host就够了，但是对于http/https还需要处理一下
+                if protocol == "https" or protocol == "http":
+                    if not host.startswith("http"):
+                        host = protocol + "://" + host
+                conf.target.add(host)
 
     except Exception as e:
         colorprint.red(e)
