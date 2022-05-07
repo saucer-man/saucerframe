@@ -18,7 +18,7 @@ from lib.core.log import logger
 
 def check(email, key):  # verify email and key
     if email and key:
-        auth_url = "https://fofa.so/api/v1/info/my?email={0}&key={1}".format(email, key)
+        auth_url = "https://fofa.info/api/v1/info/my?email={0}&key={1}".format(email, key)
         try:
             response = request.get(auth_url)
             if response.status_code == 200:
@@ -57,7 +57,7 @@ def handle_fofa(query, limit, offset=0):
     # count how many result to search
     size = limit + offset  
     
-    url = f"https://fofa.so/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}&fields=host,ip,protocol,port"
+    url = f"https://fofa.info/api/v1/search/all?email={email}&key={key}&qbase64={query}&size={size}&fields=host,ip,protocol,port"
     try:
         response = request.get(url).text
         resp = json.loads(response)
